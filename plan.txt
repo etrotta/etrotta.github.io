@@ -1,0 +1,19 @@
+Pokemon (small circles) //DONE
+Path (a -> b) //DONE
+Party (click and drag to move) //should have separated further //DONE
+Tower Spots (put party) //DONE
+Basic Attacking //That took WAY longer than I thought it would have...
+Killing enemies //Sorta done?
+Catching
+Enemy Waves
+Candies (lose condition)
+Enemy attacking //actually did this alongside basic attacking
+
+// enough for the day.... //cheers day two and not even halfway gone
+
+Party manager
+Stats //sorta added on Basic Attacking
+Moves //sorta added on Basic Attacking
+Abilities
+Saving the party
+Shiny? Shadow? Elemental?
