@@ -1,4 +1,4 @@
-bulbasaur = {
+rattata = {
   baseStats:{
     health:100,
     attack:10,
@@ -9,5 +9,8 @@ bulbasaur = {
   },
   levelMoves:{
     1:"tackle"
-  }
+  },
+  types:[
+    TYPE_NORMAL
+  ]
 }

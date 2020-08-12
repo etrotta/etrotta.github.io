@@ -15,13 +15,9 @@ class Stat{
 }
 
 class Stats{
-  constructor(health,attack,defense,special_attack,special_defense,speed){
-    this.health = new Stat("health",health);
-    this.attack = new Stat("attack",attack);
-    this.defense = new Stat("defense",defense);
-    this.special_attack = new Stat("special_attack",special_attack);
-    this.special_defense = new Stat("special_defense",special_defense);
-    this.speed = new Stat("speed",speed);
+  constructor(stats, level){
+    this.baseStats = stats;
+    this.update(level);
   }
   reset(){
     this.health.stage = 0;
@@ -31,13 +27,17 @@ class Stats{
     this.special_defense.stage = 0;
     this.speed.stage = 0;
   }
-  static generateFrom(stats, level){
-    const hp = stats.health * level / 50 + 110;
-    const atk = stats.attack * level / 50 + 5;
-    const def = stats.defense * level / 50 + 5;
-    const sp_atk = stats.special_attack * level / 50 + 5;
-    const sp_def = stats.special_defense * level / 50 + 5;
-    const speed = stats.speed * level / 50 + 5;
-    return new Stats(hp,atk,def,sp_atk,sp_def,speed);
+  update(level){
+    let stats = this.baseStats;
+    this.health = new Stat("health",Math.ceil((stats.health+110) * level / 50));
+    this.attack = new Stat("attack",Math.ceil((stats.attack+5) * level / 50));
+    this.defense = new Stat("defense",Math.ceil((stats.defense+5) * level / 50));
+    this.special_attack = new Stat("special_attack",Math.ceil((stats.special_attack+5) * level / 50));
+    this.special_defense = new Stat("special_defense",Math.ceil((stats.special_defense+5) * level / 50));
+    this.speed = new Stat("speed",Math.ceil((stats.speed+5) * level / 50));
   }
+  get(stat){
+    if (this[stat] != null) return this[stat]; else return null;
+  }
+
 }

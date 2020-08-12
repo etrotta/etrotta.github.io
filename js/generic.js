@@ -19,7 +19,7 @@ const getPokemon = function(id){
 }
 
 const getPokemonInBounds = function(x,y,width,height,filter){
-  const ar = party.slots.map(s => s.pokemon).filter(o => o != null).concat(pokes);
+  const ar = Instance.activeLevel.party.slots.map(s => s.pokemon).filter(o => o != null).concat(Instance.activeLevel.wildPokes);
   for (let pokemon of ar){
     if (x - width/2 < pokemon.x && pokemon.x < x + width/2 && y - height/2 < pokemon.y && pokemon.y < y + height/2 && (filter == null || filter(pokemon))){
       return pokemon;
@@ -41,7 +41,22 @@ const damageFormula = function(attacker, target, move, modifiers){
   const defense = target.stats[move.defendingStat].getValue();
   const level = attacker.level;
   const power = move.power;
-  const modifier = 1; //TODO
+  let modifier = 1; //TODO
+    if (attacker.types.includes(move.type)) modifier *= 1.5;
   const damage = ((2 * level/5 + 2) * power * attack / defense / 50 + 2) * modifier;
   return damage;
 }
+const expLevelFormula = function(level){
+  return 1 + Math.floor(0.7*level**3);
+}
+const expGainFormula = function(dead){
+  let base;
+  if (dead.stats.get("baseExp") != null) base = dead.stats.get("baseExp"); else base = 140;
+  if (dead.isBoss) base *= 10;
+  return Math.round(base/7 * dead.level);
+}
+const isPokemon = function(object){
+  if (object != null && object instanceof Pokemon) return true;
+}
+
+const LEVEL_CAP = 100;

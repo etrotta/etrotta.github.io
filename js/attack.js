@@ -1,15 +1,16 @@
 class Attack{
-  constructor(data,spawner,target,resolve){
+  constructor(data,spawner,target,resolve,color = "rgb(47, 179, 214)"){
     this.data = data;
     this.spawner = spawner;
     this.x = spawner.x;
     this.y = spawner.y;
     this.target = target;
     this.resolve = resolve;
+    this.color = color;
     // this.resolveVars = vars;
   }
   update(){
-    if (this.target === undefined || this.target === null || this.target.health <= 0){
+    if (this.target === undefined || this.target === null || this.target.health <= 0 || this.target.x == -1 || this.target.y == -1){
       this.destroy();
       return;
     }
@@ -25,10 +26,13 @@ class Attack{
     // this.draw();
   }
   draw(){
-    ctx.fillStyle = "rgba(47, 179, 214, 0.6)";
+    // ctx.fillStyle = "rgba(47, 179, 214, 0.6)";
+    ctx.fillStyle = this.color;
+    ctx.globalAlpha = 0.6;
     ctx.beginPath();
     ctx.arc(this.x,this.y,5,0,Math.PI*2);
     ctx.fill();
+    ctx.globalAlpha = 1;
   }
   destroy(){
     this.spawner.attacks.remove(this);

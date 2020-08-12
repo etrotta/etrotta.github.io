@@ -1,5 +1,7 @@
 class Move{
-  constructor(damage,type,attackingStat,defendingStat,attackerStatMods,defendingStatMods){
+  constructor(id,damage,type,attackingStat,defendingStat,attackerStatMods,defendingStatMods){
+    this.id = id;
+
     this.power = damage;
     this.type = type;
 

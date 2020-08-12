@@ -15,17 +15,22 @@ class Party{
   catch(enemy){
     for (let slot of this.slots){
       if (slot.pokemon == null){
-        pokes.remove(enemy);
-        slot.pokemon = new Ally(enemy.id,enemy.level,"red");
+        Instance.activeLevel.wildPokes.remove(enemy);
+        slot.pokemon = new Ally(enemy.id,enemy.level,enemy.moves);
         return true;
       }
     }
     return false;
   }
-  update(){
+  addExp(exp){
+    for (let slot of this.slots){
+      if (slot.pokemon != null) slot.pokemon.addExp(exp);
+    }
+  }
+  update(level){
     for (let slot of this.slots){
       if (slot.pokemon != null){
-        slot.pokemon.update();
+        slot.pokemon.update(level);
       }
       // slot.update();
     }
@@ -38,15 +43,15 @@ class Party{
   }
   populateSlots(party){
     if (party == null) party = [
-      new Ally("bulbasaur",100),
-      new Ally("bulbasaur",100),
-      new Ally("bulbasaur",100),
+      new Ally("bulbasaur",10,[tackle,vineWhip]),
+      new Ally("bulbasaur",10,[vineWhip,tackle]),
+      new Ally("rattata",10,[tackle]),
       null,
       null,
       null
     ]; //placeholder
     for (let i = 0; i < 6; i++){
-      this.slots[i] = new Slot(i * 75 + 25, 400,60,100, party[i]);
+      this.slots[i] = new Slot(i * 85 + 20, 350,75,225, party[i]);
     }
   }
 

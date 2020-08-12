@@ -1,4 +1,3 @@
-spots = [];
 class Spot{
   width = 32;
   height = 32;

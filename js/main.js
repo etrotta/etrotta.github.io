@@ -1,36 +1,31 @@
+Instance = {};
+// Instance.levels = [];
+party = new Party()
 canvas = null;
 ctx = null;
 paused = false;
+playerPaused = false;
 
 window.addEventListener("load",load);
 
 function load(){
   canvas = document.getElementById("gameCanvas");
   ctx = canvas.getContext("2d");
-  ctx.lineWidth = 2;
 
-  path = new Path(new Point(0,100), new Point(100,100), new Point(100,300), new Point(500,300));
-
-  pokes = [];
-  // pokes.push(new Enemy("bulbasaur",100,path));
-  waves = [];
-  //   constructor(id,level,path,delay,count,forceEnd,onEnd){
-  waves.push(new Wave("bulbasaur",100,path,60,-1));
-  waves[0].spawn();
-
-  spots.push(new Spot(50,125));
-  spots.push(new Spot(140,250));
-  spots.push(new Spot(240,250));
-  spots.push(new Spot(140,340));
-
-  party = new Party();
   party.populateSlots(null);
   party.update();
 
-  pokeball = new Pokeball(535,450);
+  pokeball = new Pokeball(canvas.width - 50,canvas.height - 150);
+
+  level1 = LEVEL_ONE;
+  level2 = LEVEL_TWO;
+  // Instance.levels.push(level1,level2)
+  // level1.start();
+  levelSelector = new LevelSelector(level1,level2);
+  levelSelector.activate();
 
   loop();
-  setInterval(loop,250);
+  setInterval(loop,100);
 
   document.addEventListener("mousedown",function(evt){handleMouse(evt,0);});
   document.addEventListener("mouseup",function(evt){handleMouse(evt,1);});
@@ -42,23 +37,18 @@ function load(){
 
 function drawAll(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle = "rgba(127,127,127,0.5)";
+  let grad = ctx.createRadialGradient(canvas.width/2,canvas.height/2,100,canvas.width/2,canvas.height/2,Math.min(canvas.width/2,canvas.height/2));
+    grad.addColorStop(0,"rgba(150,150,150,0.5)");
+    grad.addColorStop(1,"rgba(120,120,120,0.5)");
+  ctx.fillStyle = grad;
   ctx.fillRect(0,0,canvas.width,canvas.height);
-  path.draw();
-  // slots.forEach(slot => slot.draw());
-  party.draw();
-  pokeball.draw();
-  spots.forEach(spot => spot.draw());
-  pokes.forEach(poke => poke.draw());
-  if (SELECTED != null && SELECTED.pokemon != null) SELECTED.pokemon.draw(mousePos.x,mousePos.y);
-  if (SELECTED == pokeball) SELECTED.draw(mousePos.x,mousePos.y,25,0.5);
+  if (Instance.activeLevel != null) Instance.activeLevel.draw();
+  levelSelector.draw();
 }
 
 function loop(){
-  if (!paused) {
-    waves.forEach(wave => wave.update());
-    pokes.forEach(poke => poke.update());
-    party.update();
+  if (!paused && !playerPaused) {
+    if (Instance.activeLevel != null) Instance.activeLevel.update();
   }
   drawAll();
 }

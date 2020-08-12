@@ -5,6 +5,7 @@ class Pokeball{
     this.radius = radius;
   }
   draw(x = this.x, y = this.y, r = this.radius, alpha = 1){
+    ctx.lineWidth = 2;
     for (let i = 0; i < 2; i++){
       ctx.fillStyle = i ? `rgba(255,0,0,${alpha})` : `rgba(127,127,127,${alpha})`;
       ctx.beginPath();
@@ -25,5 +26,14 @@ class Pokeball{
     ctx.beginPath()
     ctx.arc(x,y,r/2.5,0,Math.PI*2);
     ctx.stroke();
+
+    let grad = ctx.createRadialGradient(this.x - r/2.5, this.y - r/2.5, 0, this.x , this.y, r+2);
+    grad.addColorStop(0,"rgba(255,255,255,0)");
+    grad.addColorStop(1,`rgba(255,255,255,${0.25 * alpha})`);
+    // grad.addColorStop(1,`rgba(0,0,255,${alpha})`);
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(x,y,r+2,0,2 * Math.PI);
+    ctx.fill()
   }
 }
