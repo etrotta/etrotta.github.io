@@ -19,10 +19,10 @@ class LevelSelector{
       grad.addColorStop(1, "black");
     this.returnButton = new Clickable(
       {x: canvas.width - 150, y:0, width:150, height:50, color:grad, outline:{thickness:2,color:"black"}},
-      {text:"Return to tittle",color:"white",offsetX:20,offsetY:20,size:16},
+      {text:"Return to tittle",color:"white",offsetX:"center",offsetY:"center",size:16},
       function(){self.return();}
     )
-    clickables.push(this.returnButton);
+    // clickables.push(this.returnButton);
 
     // SAVE
     grad = ctx.createLinearGradient(700,300,800,450);
@@ -31,10 +31,10 @@ class LevelSelector{
       grad.addColorStop(0.6, "rgb(30, 100, 30)");
     this.saveButton = new Clickable(
       {x: 700, y:300, width:100, height:100, color:grad, outline:{thickness:2,color:"black"}},
-      {text:"Save",color:"gold",offsetX:24,offsetY:40,size:16},
-      function(value){if (value == 1){partyManager.saveParty(); alert("Saved!");}}
+      {text:"Save",color:"gold",offsetX:"center",offsetY:"center",size:16},
+      function(value){if (value == 1){partyManager.save(); alert("Saved!");}}
     )
-    clickables.push(this.saveButton);
+    // clickables.push(this.saveButton);
     // RESET
     grad = ctx.createLinearGradient(900,300,1100,450);
     grad.addColorStop(0.2, "rgb(100, 30, 30)");
@@ -42,9 +42,21 @@ class LevelSelector{
       grad.addColorStop(0.6, "rgb(100, 30, 30)");
     this.resetButton = new Clickable(
       {x: 900, y:300, width:100, height:100, color:grad, outline:{thickness:2,color:"black"}},
-      {text:"Delete",color:"red",offsetX:24,offsetY:40,size:16},
+      {text:"Reset",color:"red",offsetX:"center",offsetY:"center",size:16},
       function(value){if (value == 1){partyManager.resetParty(); alert("Done!");}}
     )
+    // clickables.push(this.resetButton);
+    // STORAGE
+    grad = ctx.createLinearGradient(700,450,1000,600);
+      grad.addColorStop(0, "rgb(0,63,127)");
+      grad.addColorStop(0.5, "rgb(63,63,31)");
+      grad.addColorStop(1, "rgb(0,63,127)");
+    this.storageButton = new Clickable(
+      {x: 700, y:450, width:300, height:100, color:grad, outline:{thickness:2,color:"black"}},
+      {text:"Manage Party",color:"red",offsetX:"center",offsetY:"center",size:16},
+      function(value){if (value == 1){partyManager.openStorage(); self.activate(false);}}
+    )
+    // clickables.push(this.storageButton);
     // grad = ctx.createLinearGradient(900,300,1000,300);
     // grad.addColorStop(0, "rgb(0,0,127)");
     //   grad.addColorStop(0.5, "blue");
@@ -54,7 +66,6 @@ class LevelSelector{
     //   {text:"The Lab",color:"gold",offsetX:18,offsetY:15,size:16},
     //   function(value){if (value == 1){partyManager.resetParty(); alert("Done!");}}
     // )
-    clickables.push(this.resetButton);
   }
   addLevel(level){
     const self = this;
@@ -65,7 +76,7 @@ class LevelSelector{
       function(){self.startLevel(self._levels[index-1]);}
     );
     this.clickables.push(lvl);
-    clickables.push(lvl);
+    // clickables.push(lvl);
   }
   activate(value = true){
     for (let level of this.clickables){
@@ -73,6 +84,7 @@ class LevelSelector{
     }
     this.saveButton.setActive(value);
     this.resetButton.setActive(value);
+    this.storageButton.setActive(value);
     this.returnButton.setActive(!value);
   }
   startLevel(level){
@@ -84,13 +96,16 @@ class LevelSelector{
     for (let clickable of levelSelector.clickables){
       if (clickable.active) clickable.draw();
     }
-    if (this.returnButton.active) this.returnButton.draw();
     if (this.saveButton.active) this.saveButton.draw();
+    if (this.returnButton.active) this.returnButton.draw();
+    if (this.storageButton.active) this.storageButton.draw();
     if (this.resetButton.active) this.resetButton.draw();
+    if (storageOpen) partyManager.drawStorage();
   }
   return(){
-    partyManager.party.heal();
+    partyManager.party.restore();
     this.activate(true);
-    this.activeLevel.destroy();
+    if (this.activeLevel != null) this.activeLevel.destroy();
+    if (storageOpen) partyManager.closeStorage();
   }
 }

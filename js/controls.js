@@ -1,9 +1,12 @@
 mousePos = {x:null,y:null}
 clickables = [];
+dragables = [];
+dropables = [];
+DRAGGING = null;
 
 function getClickables(x,y){
   let ar = [];
-  for (let clickable of clickables){
+  for (let clickable of clickables.concat(dropables).concat(dragables)){
     if (clickable.active && clickable.rect.x < x && x < (clickable.rect.x + clickable.rect.width) && clickable.rect.y < y && y < (clickable.rect.y + clickable.rect.height)) ar.push(clickable);
   }
   return ar;
@@ -20,6 +23,7 @@ function handleMouse(evt,value){
   mousePos = {x,y};
   levelHandleMouse(x,y,value);
   for (let clickable of getClickables(x,y)) clickable.onClick(value);
+  if (value == 1) DRAGGING = null;
   evt.preventDefault();
   drawAll();
 }
@@ -31,6 +35,9 @@ function handleMouseMove(evt){
   drawAll();
   mousePos = {x,y};
   levelHandleMouseMove(x,y);
+  if (DRAGGING != null){
+    DRAGGING.drawOnMouse(x,y);
+  }
 }
 function handleKey(evt,value){
   levelHandleKey(evt.key,value);

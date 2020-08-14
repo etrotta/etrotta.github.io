@@ -8,6 +8,7 @@ class Spot{
   }
   draw(){
     ctx.strokeStyle = "yellow";
+    ctx.lineWidth = paused ? 2 : 1;
     ctx.strokeRect(this.x,this.y,this.width,this.height);
     if (this.pokemon != null){
       this.pokemon.draw();

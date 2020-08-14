@@ -9,13 +9,13 @@
 
   let waves = [];
   // waves.push(new Wave("rattata",5,path1,40,1,5,moves,false));
-  waves.push(["rattata",5,0,40,1,5,moves,false]);
+  waves.push(["rattata",5,8,0,40,1,5,moves,false]);
 
   let spots = [];
   // spots.push(new Spot(50,50));
   // spots.push(new Spot(150,150));
   spots.push([50,50]);
-  spots.push([150,150]);
+  spots.push([134,134]);
 
   // LEVEL_ONE = new Level(paths,waves,spots);
   resourceLoader.addLevel("LEVEL_ONE",

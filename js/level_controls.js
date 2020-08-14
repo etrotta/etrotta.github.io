@@ -8,7 +8,7 @@ function getSlot(x,y,level){
   }
   return null;
 }
-function getSlotPokemon(x,y,level){ const slot = getSlot(x,y,level); if (slot == null || slot.pokemon.health <= 0) return null; else return slot.pokemon; }
+function getSlotPokemon(x,y,level){ const slot = getSlot(x,y,level); if (slot == null || slot.pokemon == null || slot.pokemon.health <= 0) return null; else return slot.pokemon; }
 
 function getSpot(x,y,level){
   for (let spot of level.spots){
@@ -16,7 +16,7 @@ function getSpot(x,y,level){
   }
   return null;
 }
-function getSpotPokemon(x,y,level){ const spot = getSpot(x,y,level); if (spot == null || spot.pokemon.health <= 0) return null; else return spot.pokemon; }
+function getSpotPokemon(x,y,level){ const spot = getSpot(x,y,level); if (spot == null || spot.pokemon == null || spot.pokemon.health <= 0) return null; else return spot.pokemon; }
 
 function getPokeball(x,y){
   const r = pokeball.radius;

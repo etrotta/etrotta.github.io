@@ -1,3 +1,11 @@
+String.prototype.count = function(char){
+  let r = 0;
+  for (let i = 0; i < this.length; i++){
+    if (this[i] == char) r++;
+  }
+  return r;
+}
+
 Math.clamp = function(number,min,max) {
   return Math.min(Math.max(number,min),max);
 }
@@ -10,6 +18,11 @@ Array.prototype.remove = function(object){
     }
   }
   return this;
+}
+
+const random = function(min,max,step = 1){
+  let n = Math.random() * (max-min) + min;
+  return (n - n%step);
 }
 
 const outOfBounds = (x,y) => x < 0 || y < 0 || x > canvas.width || y > canvas.height;

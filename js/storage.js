@@ -1,12 +1,18 @@
 // NOT IMPLEMENTED YET
-class Storage{
+class PokeStorage{
   constructor(){
     this.pokemons = [...arguments];
   }
-  save(){
-    const ar = [];
-    for (let pokemon of this.pokemons){
-      ar.push(pokemon.save());
-    }
+  add(pokemon){
+    this.pokemons.push(pokemon);
+  }
+  remove(pokemon){
+    this.pokemons.remove(pokemon);
+  }
+  get size(){
+    return this.pokemons.length;
+  }
+  reset(){
+    this.pokemons = [];
   }
 }

@@ -7,6 +7,7 @@ canvas = null;
 ctx = null;
 paused = false;
 playerPaused = false;
+storageOpen = false;
 
 window.addEventListener("load",load);
 
@@ -18,7 +19,9 @@ function load(){
   party.populateSlots(null);
   party.update();
 
-  partyManager = new PartyManager(party);
+  storage = new PokeStorage();
+
+  partyManager = new PartyManager(party, storage);
 
   pokeball = new Pokeball(canvas.width - 50,canvas.height - 150);
 
@@ -27,10 +30,10 @@ function load(){
   resourceLoader.load();
   resourceLoader.loadLevels();
 
-  partyManager.loadParty();
+  partyManager.load();
 
   levelSelector.activate();
-  // levelSelector.clickables[0].onClick();
+  levelSelector.storageButton.onClick(1);
 
   loop();
   setInterval(loop,1000/30);
@@ -53,6 +56,7 @@ function drawAll(){
   ctx.fillStyle = grad;
   ctx.fillRect(0,0,canvas.width,canvas.height);
   if (Instance.activeLevel != null) Instance.activeLevel.draw();
+  if (DRAGGING != null) DRAGGING.drawOnMouse(mousePos.x,mousePos.y);
   levelSelector.draw();
 }
 

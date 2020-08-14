@@ -1,27 +1,28 @@
-class Clickable{
-  constructor(rect,text,func,autoAdd = true){
+class Dragable{
+  constructor(rect,text,func,packet, autoAdd = true){
     this.rect = rect;
     this.text = text;
     this.func = func;
+    this.packet = packet;
     this.active = false;
-    if (autoAdd) clickables.push(this);
+    if (autoAdd) dragables.push(this);
   }
-  draw(){
+  draw(x = this.rect.x, y = this.rect.y){
     if (!this.active) return;
     const rect = this.rect;
     ctx.fillStyle = rect.color;
-    ctx.fillRect(rect.x,rect.y,rect.width,rect.height);
+    ctx.fillRect(x,y,rect.width,rect.height);
 
     const other = rect.draw;
     if (other != null){
-      other.draw(rect.x + rect.width / 2, rect.y + rect.height / 2);
+      other.draw(x + rect.width / 2, y + rect.height / 2);
     }
 
     const outline = rect.outline;
     if (outline != null){
       ctx.strokeStyle = outline.color;
       ctx.lineWidth = outline.thickness;
-      ctx.strokeRect(rect.x,rect.y,rect.width,rect.height);
+      ctx.strokeRect(x,y,rect.width,rect.height);
     }
 
     const text = this.text;
@@ -37,11 +38,28 @@ class Clickable{
       let offsetY;
         if (typeof(text.offsetY) == "number") offsetY = text.offsetY;
         if (text.offsetY == "center") offsetY = rect.height/2;
-      ctx.fillText(text.text, rect.x + offsetX, rect.y + offsetY);
+      ctx.fillText(text.text, x + 2 + offsetX, y + offsetY);
     }
   }
+  drawOnMouse(x,y){
+    ctx.globalApha = 0.5;
+    const other = this.rect.draw;
+    if (other != null){
+      other.draw(x, y, undefined, false);
+    }
+    ctx.globalApha = 0;
+  }
   onClick(value){
-    if (this.func != null) this.func(value);
+    if (value == 0){
+      DRAGGING = this;
+      return;
+    }
+    if (value == 1){
+      return;
+    }
+  }
+  onDrop(dropable){
+    if (this.func != null) this.func(dropable);
   }
   setActive(value){
     this.active = value;

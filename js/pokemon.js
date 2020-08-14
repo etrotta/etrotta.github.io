@@ -44,14 +44,14 @@ class Pokemon{
     }
     if (this.changedAttackTicks < 10) this.changedAttackTicks++;
   }
-  __draw(x = this.x, y = this.y,color = this.types[0].color){
+  __draw(x = this.x, y = this.y,color = this.types[0].color, hp = true){
     if (outOfBounds(x,y)) return;
     ctx.fillStyle = color;
     ctx.beginPath();
     ctx.arc(x,y,10,0,Math.PI*2);
     ctx.fill();
-    this.displayHealth(x,y);
-    this.displayLevel(x-10,y-24);
+    if (hp) this.displayHealth(x,y);
+    this.displayLevel(x,y-24);
     for (let attack of this.attacks){
       attack.draw();
     }
@@ -73,9 +73,11 @@ class Pokemon{
   }
   displayLevel(x,y){
     ctx.lineWidth = 1;
-    ctx.font = "10px arial";
-    ctx.strokeStyle = "rgb(205, 99, 22)";
-    ctx.strokeText(`Lv:${this.level}`,x,y);
+    ctx.font = "12px arial";
+    ctx.fillStyle = "rgb(205, 99, 22)";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+    ctx.fillText(`Lv:${this.level}`,x,y);
   }
   addExp(exp){
     if (this.level === LEVEL_CAP){
@@ -192,6 +194,7 @@ class Ally extends Pokemon{
     super(id,level,moves,-1,-1);
     this.active = false;
     this.spot = null;
+    this.slot = null;
   }
   setActive(value){
     if (this.health <= 0 && value == 1) return;
@@ -207,7 +210,7 @@ class Ally extends Pokemon{
     this.__update(level);
     // this.draw();
   }
-  draw(x = this.x, y = this.y, color = this.color){
+  draw(x = this.x, y = this.y, color = this.color, hp = true){
     this.__draw(...arguments);
   }
   drawRange(x = this.x, y = this.y,color = "rgba(0,63,127,0.5)"){
@@ -255,7 +258,13 @@ class Ally extends Pokemon{
     ctx.fillStyle = move.type.color;
     ctx.lineWidth = 1;
     ctx.font = "12px arial";
-    ctx.fillText(this.moves[i].name + (LAST_SELECTED == this ? ` (${key})` : ""), x - width/2 + 1, y + height/2 + offsetY + 1);
+    ctx.textAlign = "left";
+    ctx.textBaseline = "bottom";
+    ctx.fillText(this.moves[i].name, x - width/2 + 2, y + height/2 + offsetY + 1);
+    if (LAST_SELECTED == this){
+      ctx.textAlign = "right";
+      ctx.fillText(`(${key})`, x + width/2 - 2, y + height/2 + offsetY + 1);
+    }
   }
   setSpot(spot){
     if (this.spot == spot) return;
@@ -300,10 +309,10 @@ class Ally extends Pokemon{
     this.draw();
   }
   faint(){
-    // this.setSpot(null);
-    this.setActive(false);
-    this.spot.pokemon = null;
-    this.spot = null;
+    this.setSpot(null);
+    // this.setActive(false);
+    // this.spot.pokemon = null;
+    // this.spot = null;
   }
   getEnemyInRange(level){
     for (let pokemon of level.wildPokes){

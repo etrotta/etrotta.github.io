@@ -1,10 +1,11 @@
-class Clickable{
-  constructor(rect,text,func,autoAdd = true){
+class Dropable{
+  constructor(rect,text,func,packet, autoAdd = true){
     this.rect = rect;
     this.text = text;
     this.func = func;
+    this.packet = packet;
     this.active = false;
-    if (autoAdd) clickables.push(this);
+    if (autoAdd) dropables.push(this);
   }
   draw(){
     if (!this.active) return;
@@ -37,11 +38,22 @@ class Clickable{
       let offsetY;
         if (typeof(text.offsetY) == "number") offsetY = text.offsetY;
         if (text.offsetY == "center") offsetY = rect.height/2;
-      ctx.fillText(text.text, rect.x + offsetX, rect.y + offsetY);
+      ctx.fillText(text.text, rect.x + 2 + offsetX, rect.y + offsetY);
     }
   }
   onClick(value){
-    if (this.func != null) this.func(value);
+    if (value == 0){
+      return;
+    }
+    if (value == 1){
+      if (DRAGGING != null){
+        DRAGGING.onDrop(this);
+        this.onDrop(DRAGGING);
+      }
+    }
+  }
+  onDrop(draggable){
+    if (this.func != null) this.func(draggable);
   }
   setActive(value){
     this.active = value;

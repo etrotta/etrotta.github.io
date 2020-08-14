@@ -1,7 +1,8 @@
 class Wave{
-  constructor(id,level,path,delay,startingDelay,count,moves,shouldAttack,boss,forceEnd,onEnd){
+  constructor(id,minLevel,maxLevel,path,delay,startingDelay,count,moves,shouldAttack,boss,forceEnd,onEnd){
     this.pokemon = id;
-    this.level = level;
+    this.minLevel = minLevel;
+    this.maxLevel = maxLevel;
     this.path = path;
     this.delay = delay;
     this.startingTicks = startingDelay;
@@ -23,7 +24,7 @@ class Wave{
       }
   }
   spawn(level){
-    let pokemon = new Enemy(this.pokemon,this.level,level.paths[this.path],this.moves.slice(0),this.shouldAttack,this.boss);
+    let pokemon = new Enemy(this.pokemon,random(this.minLevel,this.maxLevel),level.paths[this.path],this.moves.slice(0),this.shouldAttack,this.boss);
     level.wildPokes.push(pokemon);
   }
   update(level){

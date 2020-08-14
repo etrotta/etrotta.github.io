@@ -13,13 +13,17 @@ class Party{
     else return false;
   }
   catch(enemy){
-    for (let slot of this.slots){
-      if (slot.pokemon == null){
-        Instance.activeLevel.wildPokes.remove(enemy);
-        slot.pokemon = new Ally(enemy.id,enemy.level,enemy.moves);
+    let newPoke = new Ally(enemy.id,enemy.level,enemy.moves);
+    partyManager.storage.add(newPoke);
+    Instance.activeLevel.wildPokes.remove(enemy);
+    for (let i = 0; i < this.slots.length; i++){
+      if (this.slots[i].pokemon == null){
+        this.slots[i].pokemon = newPoke;
+        newPoke.slot = i;
         return true;
       }
     }
+    newPoke.slot = null;
     return false;
   }
   addExp(exp){
@@ -27,9 +31,13 @@ class Party{
       if (slot.pokemon != null) slot.pokemon.addExp(exp);
     }
   }
-  heal(value){
+  restore(){
     for (let slot of this.slots){
-      if (slot.pokemon != null) slot.pokemon.heal();
+      if (slot.pokemon != null) {
+        slot.pokemon.heal();
+        slot.pokemon.attackTicks = [32,32,32,32];
+        slot.pokemon.changedAttackTicks = 10;
+      }
     }
   }
   update(level){
@@ -63,6 +71,9 @@ class Party{
     for (let i = 0; i < 6; i++){
       this.slots[i] = new Slot(i * 120 + 20, 350,100,225, null);
     }
+  }
+  reset(){
+    for (let slot of this.slots) slot.pokemon = null;
   }
 
 }
