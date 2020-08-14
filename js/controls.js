@@ -3,7 +3,7 @@ clickables = [];
 
 function getClickables(x,y){
   let ar = [];
-  for (clickable of clickables){
+  for (let clickable of clickables){
     if (clickable.active && clickable.rect.x < x && x < (clickable.rect.x + clickable.rect.width) && clickable.rect.y < y && y < (clickable.rect.y + clickable.rect.height)) ar.push(clickable);
   }
   return ar;
@@ -19,7 +19,7 @@ function handleMouse(evt,value){
   if (outOfBounds(x,y) && value === 1) return;
   mousePos = {x,y};
   levelHandleMouse(x,y,value);
-  for (clickable of getClickables(x,y)) clickable.onClick(value);
+  for (let clickable of getClickables(x,y)) clickable.onClick(value);
   evt.preventDefault();
   drawAll();
 }
@@ -33,7 +33,7 @@ function handleMouseMove(evt){
   levelHandleMouseMove(x,y);
 }
 function handleKey(evt,value){
-  levelHandleKey(evt.keyCode,value);
+  levelHandleKey(evt.key,value);
   if (evt.keyCode === 32){
     evt.preventDefault();
   }

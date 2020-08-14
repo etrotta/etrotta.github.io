@@ -9,13 +9,13 @@ Point = Vector2;
 class Path{
   points = [];
   connection = null;
-  constructor(){
-    for (let object of arguments){
+  constructor(others){
+    for (let object of [...arguments].slice(1)){
       if (object instanceof Point){
         this.points.push(object);
       }
-      else if (object.path instanceof Path){
-        this.connection = object.path;
+      else if (others[object.path] instanceof Path){
+        this.connection = others[object.path];
         this.connectionStartAt = object.startAt;
       }
       else if (object.loop === true){

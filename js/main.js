@@ -1,6 +1,8 @@
+MOVES = new Map();
+POKEMONS = new Map();
+resourceLoader = new ResourceLoader();
+
 Instance = {};
-// Instance.levels = [];
-party = new Party()
 canvas = null;
 ctx = null;
 paused = false;
@@ -12,25 +14,33 @@ function load(){
   canvas = document.getElementById("gameCanvas");
   ctx = canvas.getContext("2d");
 
+  party = new Party()
   party.populateSlots(null);
   party.update();
 
+  partyManager = new PartyManager(party);
+
   pokeball = new Pokeball(canvas.width - 50,canvas.height - 150);
 
-  level1 = LEVEL_ONE;
-  level2 = LEVEL_TWO;
-  // Instance.levels.push(level1,level2)
-  // level1.start();
-  levelSelector = new LevelSelector(level1,level2);
+  levelSelector = new LevelSelector();
+
+  resourceLoader.load();
+  resourceLoader.loadLevels();
+
+  partyManager.loadParty();
+
   levelSelector.activate();
+  // levelSelector.clickables[0].onClick();
 
   loop();
-  setInterval(loop,100);
+  setInterval(loop,1000/30);
 
-  document.addEventListener("mousedown",function(evt){handleMouse(evt,0);});
-  document.addEventListener("mouseup",function(evt){handleMouse(evt,1);});
-  document.addEventListener("mousemove",function(evt){handleMouseMove(evt);});
-  document.addEventListener("contextmenu",function(evt){handleContext(evt);});
+  canvas.addEventListener("mousedown",function(evt){handleMouse(evt,0);});
+  canvas.addEventListener("mouseup",function(evt){handleMouse(evt,1);});
+  canvas.addEventListener("mousemove",function(evt){handleMouseMove(evt);});
+
+  canvas.addEventListener("contextmenu",function(evt){handleContext(evt);});
+
   document.addEventListener("keydown",function(evt){handleKey(evt,0);});
   document.addEventListener("keyup",function(evt){handleKey(evt,1);});
 }

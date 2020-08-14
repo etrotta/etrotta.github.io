@@ -12,10 +12,18 @@ class Wave{
     this.boss = boss;
     this.forceEnd = forceEnd;
     this.onEnd = onEnd;
-    this.moves = moves;
+    this.moves = [];
+      for (let move of moves){
+        if (move instanceof Move){
+          this.moves.push(move);
+        }
+        else if (typeof(move) === "string"){
+          this.moves.push(MOVES.get(move));
+        }
+      }
   }
   spawn(level){
-    let pokemon = new Enemy(this.pokemon,this.level,this.path,this.moves.slice(0),this.shouldAttack,this.boss);
+    let pokemon = new Enemy(this.pokemon,this.level,level.paths[this.path],this.moves.slice(0),this.shouldAttack,this.boss);
     level.wildPokes.push(pokemon);
   }
   update(level){

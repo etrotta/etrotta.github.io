@@ -11,6 +11,13 @@ class Clickable{
     ctx.fillStyle = rect.color;
     ctx.fillRect(rect.x,rect.y,rect.width,rect.height);
 
+    const outline = this.rect.outline;
+    if (outline != null){
+      ctx.strokeStyle = outline.color;
+      ctx.lineWidth = outline.thickness;
+      ctx.strokeRect(rect.x,rect.y,rect.width,rect.height);
+    }
+
     const text = this.text;
     ctx.font = `${text.size}px arial`;
     ctx.fillStyle = text.color;

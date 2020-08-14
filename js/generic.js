@@ -14,10 +14,6 @@ Array.prototype.remove = function(object){
 
 const outOfBounds = (x,y) => x < 0 || y < 0 || x > canvas.width || y > canvas.height;
 
-const getPokemon = function(id){
-  return window[id];
-}
-
 const getPokemonInBounds = function(x,y,width,height,filter){
   const ar = Instance.activeLevel.party.slots.map(s => s.pokemon).filter(o => o != null).concat(Instance.activeLevel.wildPokes);
   for (let pokemon of ar){

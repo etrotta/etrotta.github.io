@@ -1,14 +1,15 @@
 class Move{
-  constructor(id,damage,type,attackingStat,defendingStat,attackerStatMods,defendingStatMods){
-    this.id = id;
+  constructor(data){
+    this.id = data.id;
+    this.name = data.name;
 
-    this.power = damage;
-    this.type = type;
+    this.power = data.power;
+    this.type = data.type;
 
-    this.attackingStat = attackingStat;
-    this.defendingStat = defendingStat;
+    this.attackingStat = data.attackingStat;
+    this.defendingStat = data.defendingStat;
 
-    this.attackerStatMods = attackerStatMods;
-    this.defendingStatMods = defendingStatMods;
+    this.attackerStatMods = data.attackerStatMods;
+    this.defendingStatMods = data.defendingStatMods;
   }
 }

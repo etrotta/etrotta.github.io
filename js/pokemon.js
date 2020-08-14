@@ -1,7 +1,7 @@
 class Pokemon{
   constructor(id,level,moves,x,y){
     this.id = id;
-    this.data = window[id]; //the pokemon data are global variables currently
+    this.data = POKEMONS.get(id); //the pokemon data are global variables currently
     this.types = this.data.types.slice(0);
     this.x = x;
     this.y = y;
@@ -11,7 +11,8 @@ class Pokemon{
     this.stats = new Stats(this.data.baseStats, level);
     this.health = this.stats.health.getValue();
     this.attacks = [];
-    this.attackTicks = 0;
+    this.attackTicks = [32,32,32,32];
+    this.changedAttackTicks = 10;
     this.moves = moves;
     this.__selectedMove = 0;
   }
@@ -19,22 +20,29 @@ class Pokemon{
     return this.__selectedMove;
   }
   set selectedMove(value){
-    if (0 <= value && value < this.moves.length) this.__selectedMove = value;
+    if (0 <= value && value < this.moves.length) {
+      this.__selectedMove = value;
+      this.changedAttackTicks = 0;
+      drawAll();
+    }
   }
   __update(level){
+    let ticks = this.attackTicks;
     if (this.moves[this.selectedMove] != null && (this.shouldAttack == null || this.shouldAttack == true)){
-      this.attackTicks++;
-      if (this.attackTicks >= 20){
+      for (let i = ticks.length; i >= 0; i--) (ticks[i]++);
+      if (ticks[this.selectedMove] >= 32 && this.changedAttackTicks >= 10){
         let target = this.getEnemyInRange(level);
         if (target != null) {
           this.attack(target,this.moves[this.selectedMove]);
-          this.attackTicks = 0;
+          ticks[this.selectedMove] = 0;
         }
       }
+      for (let i = ticks.length; i >= 0; i--) (ticks[i] = Math.clamp(ticks[i],0,32));
       for (let attack of this.attacks){
         attack.update();
       }
     }
+    if (this.changedAttackTicks < 10) this.changedAttackTicks++;
   }
   __draw(x = this.x, y = this.y,color = this.types[0].color){
     if (outOfBounds(x,y)) return;
@@ -112,6 +120,9 @@ class Pokemon{
       this.faint();
     }
   }
+  heal(value = this.stats.get("health").getValue()){
+    this.health = Math.clamp(0, this.health + value, this.stats.get("health").getValue());
+  }
   __faint(){
     for (let attack of this.attacks){
       attack.destroy();
@@ -145,8 +156,8 @@ class Enemy extends Pokemon{
       // this.draw();
       // return;
     } else {
-      let x = Math.clamp(point.x, this.x - 2, this.x + 2 );
-      let y = Math.clamp(point.y, this.y - 2, this.y + 2 );
+      let x = Math.clamp(point.x, this.x - 1, this.x + 1 );
+      let y = Math.clamp(point.y, this.y - 1, this.y + 1 );
       this.moveTo(x,y);
     }
     // this.draw();
@@ -200,20 +211,12 @@ class Ally extends Pokemon{
     this.__draw(...arguments);
   }
   drawRange(x = this.x, y = this.y,color = "rgba(0,63,127,0.5)"){
-    if (outOfBounds(x,y)) return;
+    if (outOfBounds(x,y) || this.health <= 0) return;
     ctx.fillStyle = color;
     ctx.beginPath();
     ctx.arc(x,y,this.range,0,Math.PI*2);
     ctx.fill();
   }
-  // displayHealthOnSlot(x,y){ //not being using
-  //   const ratio = this.health / this.stats.health.getValue();
-  //   const size = 32;
-  //   ctx.fillStyle = "rgba(0,255,0,0.6)";
-  //   ctx.fillRect(x - size/2, y - 24, size * ratio, 6);
-  //   ctx.fillStyle = "rgba(255,255,255,0.6)";
-  //   ctx.fillRect(x + size/2 - (size * (1 - ratio)), y - 24, 32 * (1 - ratio), 6);
-  // }
   displayExpOnSlot(x,y){
     const ratio = this.experience / expLevelFormula(this.level);
     const width = 32;
@@ -229,21 +232,30 @@ class Ally extends Pokemon{
   }
   displayMoveOnSlot(x,y,i){
     if (this.moves[0] == null) return;
-    const width = 64;
-    const height = 16;
-    const offsetY = 20 * i;
+    const width = 90;
+    const height = 24;
+    const offsetY = 24 * i;
     const move = this.moves[i];
+    const key = ["Z","X","C","V"][i];
+    const moveProgress = this.attackTicks[i] / 32;
+    const changeProgress = this.changedAttackTicks / 10;
+
     ctx.lineWidth = 2;
     ctx.strokeStyle = "white";
-    ctx.strokeRect(x - width/2-1, y - height + offsetY-1, width+1, height+1);
+    ctx.strokeRect(x - width/2-1, y + offsetY-1, width+1, height+1);
     if (i === this.selectedMove){
       ctx.fillStyle = "rgba(63,63,180,0.5)";
-      ctx.fillRect(x - width/2+1, y - height + offsetY+1, width-1, height-1);
+      ctx.fillRect(x - width/2+1, y + offsetY+1, width-1, height-1);
     }
+
+    ctx.fillStyle = "rgba(0,0,0,0.3)";
+    ctx.fillRect(x - width/2, y + offsetY, width * (1-moveProgress), height);
+    ctx.fillRect(x - width/2, y + offsetY, width * (1-changeProgress), height);
+
     ctx.fillStyle = move.type.color;
     ctx.lineWidth = 1;
     ctx.font = "12px arial";
-    ctx.fillText(this.moves[i].id, x - width/2 + 1, y - height/2 + offsetY + 1);
+    ctx.fillText(this.moves[i].name + (LAST_SELECTED == this ? ` (${key})` : ""), x - width/2 + 1, y + height/2 + offsetY + 1);
   }
   setSpot(spot){
     if (this.spot == spot) return;
@@ -299,5 +311,20 @@ class Ally extends Pokemon{
         return pokemon;
       }
     }
+  }
+  save(){
+    let data = {};
+    data.id = this.id;
+    data.level = this.level;
+    data.experience = this.experience;
+    data.moves = []; for (let move of this.moves) data.moves.push(move.id);
+    return JSON.stringify(data);
+  }
+  static load(data){
+    if (data.id == null) return;
+    let moves = []; for (let move of data.moves){ moves.push(MOVES.get(move)); }
+    let poke = new Ally(data.id,parseInt(data.level),moves);
+    poke.experience = parseInt(data.experience);
+    return poke;
   }
 }
