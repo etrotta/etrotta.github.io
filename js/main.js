@@ -33,7 +33,7 @@ function load(){
   partyManager.load();
 
   levelSelector.activate();
-  levelSelector.storageButton.onClick(1);
+  // levelSelector.storageButton.onClick(1);
 
   loop();
   setInterval(loop,1000/30);
