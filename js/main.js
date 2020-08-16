@@ -30,13 +30,18 @@ function load(){
   levelSelector = new LevelSelector();
 
   resourceLoader.load();
+  setScenes();
   resourceLoader.loadLevels();
 
   partyManager.load();
 
+
   Scene.setActiveScene(SCENES.get("levelSelector"));
-  // levelSelector.activate();
-  // levelSelector.clickables[0].onClick(1);
+  levelSelector.storageButton.onClick(0);
+  levelSelector.storageButton.onClick(1);
+  Instance.activeScene.elements[2].onClick(0);
+  Instance.activeScene.elements[2].onClick(1);
+  // Scene.setActiveScene(SCENES.get("partyManager"));
 
   loop();
   setInterval(loop,1000/30);
@@ -62,9 +67,8 @@ function drawAll(){
   ctx.fillRect(0,0,canvas.width,canvas.height);
   if (Instance.activeLevel != null) Instance.activeLevel.draw();
   if (Instance.activeScene != null) Instance.activeScene.draw();
-  if (DRAGGING != null) DRAGGING.drawOnMouse(mousePos.x,mousePos.y);
+  if (DRAGGING != null) DRAGGING.drawOnMouse(mousePos.x,mousePos.y,true);
   for (let clickable of getClickables(mousePos.x,mousePos.y)) clickable.onHover();
-  levelSelector.draw();
 }
 
 function loop(){

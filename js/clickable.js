@@ -6,7 +6,11 @@ class Clickable extends UIButton{
     if (autoAdd) clickables.push(this);
   }
   onClick(value){
-    if (this.clickFunction != null) this.clickFunction(value);
+    if (value == 0 && PRE_CLICK == null) PRE_CLICK = this;
+    if (value == 1 && PRE_CLICK == this) {
+      if (this.clickFunction != null) this.clickFunction(value);
+      PRE_CLICK = null;
+    }
   }
   onHover(){
     if (this.hoverFunction != null) this.hoverFunction();

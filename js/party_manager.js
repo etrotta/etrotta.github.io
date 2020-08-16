@@ -7,7 +7,6 @@ class PartyManager{
     this.storage = storage;
     this.dropables = [];
     this.dragables = [];
-    SCENES.set("partyManager",new Scene({shouldDraw:true}));
   }
   save(){
     let data = [];
@@ -38,30 +37,32 @@ class PartyManager{
   }
   openStorage(){
     const scene = SCENES.get("partyManager");
-    scene.addClickable(levelSelector.returnButton);
+    scene.addElement(levelSelector.returnButton);
 
     const self = this;
-    storageOpen = true;
     this.dropables = [];
     let len = this.party.slots.length;
     for (let i = 0; i < len; i++){
       const poke = this.party.slots[i].pokemon;
       const dragable = new Dragable(
-        {x: 40 + 128*i, y:80, width:128, height:128, draw:poke, drawArgs:[undefined,false]},
+        {x: 40 + 128*i, y:80, width:128, height:128, draw:poke, drawArgs:[false]},
         {text:poke == null ? "" : poke.id,color:"gold",offsetX:"center",offsetY:96,size:14},
-        {poke:poke}
+        {poke:poke},
+        null,
+        null,
+        null,
+        function(){Scene.setActiveScene(SCENES.get("pokemonInfo"),this);}
       );
       const dropable = new Dropable(
         {x: 40 + 128*i, y:80, width:128, height:128, color:"rgba(0,0,0,0.2)", outline:{thickness:2,color:"black"}},
         null,
-        {poke:poke,slot:self.party.slots[i],slotIndex:i,dragable:dragable},
+        {slot:self.party.slots[i],slotIndex:i,dragable:dragable},
         function(dragable){
           const newPoke = dragable.packet.poke;
-          if (newPoke instanceof Ally && newPoke != this.packet.poke) {
-            if (this.packet.poke != null){
-              this.packet.poke.slot = null;
+          if (newPoke instanceof Ally && newPoke != this.packet.dragable.packet.poke) {
+            if (this.packet.dragable.packet.poke != null){
+              this.packet.dragable.packet.poke.slot = null;
             }
-            this.packet.poke = newPoke;
             this.packet.dragable.packet.poke = newPoke;
             this.packet.dragable.rect.draw = newPoke;
             this.packet.dragable.text.text = newPoke == null ? "" : newPoke.id;
@@ -76,22 +77,18 @@ class PartyManager{
           }
         }
       );
-      scene.addClickable(dropable);
-      scene.addClickable(dragable);
-      // dropable.setActive(true);
-      // this.dropables.push(dropable);
+      scene.addElement(dropable);
+      scene.addElement(dragable);
     }
     len = this.storage.size;
     for (let i = 0; i < len; i++){
       const poke = this.storage.pokemons[i];
       const dragable = new Dragable(
-        {x: 128 + 96*i, y:244, width:96, height:96, color:"rgba(0,0,0,0.2)", outline:{thickness:2,color:"black"}, draw:poke, drawArgs:[undefined, false]},
+        {x: 128 + 96*i, y:244, width:96, height:96, color:"rgba(0,0,0,0.2)", outline:{thickness:2,color:"black"}, draw:poke, drawArgs:[false]},
         {text:poke == null ? "" : poke.id,color:"gold",offsetX:"center",offsetY:64,size:12},
         {poke:poke}
       );
-      scene.addClickable(dragable);
-      // dragable.setActive(true);
-      // this.dragables.push(dragable);
+      scene.addElement(dragable);
     }
     Scene.setActiveScene(scene);
   }
@@ -99,21 +96,5 @@ class PartyManager{
     for (let clickable of this.dropables.concat(this.dragables)){
       clickable.draw();
     }
-  }
-  updateStorage(){
-    this.closeStorage();
-    this.openStorage();
-  }
-  closeStorage(){
-    SCENES.get("partyManager").reset();
-    // for (let dropable of this.dropables){
-    //   dropables.remove(dropable);
-    // }
-    // this.dropables = [];
-    // for (let dragable of this.dragables){
-    //   dragables.remove(dragable);
-    // }
-    // this.dragables = [];
-    storageOpen = false;
   }
 }

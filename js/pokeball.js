@@ -6,7 +6,7 @@ class Pokeball{
 
     const self = this;
     this.hitbox = new Dragable(
-      {x: x - radius, y:y - radius, width:radius * 2, height:radius * 2, draw:self, drawArgs:[25,0.5] },
+      {x: x - radius, y:y - radius, width:radius * 2, height:radius * 2, draw:self, drawArgs:[], mouseDrawArgs:[25,0.5] },
       null,
       {pokeball:self},
       function(){paused = true;},

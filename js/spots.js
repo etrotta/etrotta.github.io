@@ -7,7 +7,7 @@ class Spot{
     this.pokemon = null;
     const self = this;
     this.hitbox = new Dropable(
-      {x: x, y:y, width:32, height:32, outline:{thickness:2,color:"yellow"}, draw:self.pokemon},
+      {x: x, y:y, width:32, height:32},
       null,
       {spot:self}
     )

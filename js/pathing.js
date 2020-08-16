@@ -34,9 +34,6 @@ class Path{
     throw new Error("Cannot overwrite a path points!");
   }
   getPoint(i,safe = false){
-    // if (i >= this._points.length && this.connection != null){
-    //   return this.connection.getPoint(i - this.points.length + this.connectionStartAt, safe);
-    // }
     if (this.loop && i >= this._points.length){
       i = i - this.points.length;
       return this.points[i%(this.points.length - this.loopStartAt)+this.loopStartAt];

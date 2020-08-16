@@ -35,8 +35,6 @@ class Level{
     for (let thing of this.paths.concat(this.spots).concat(this.wildPokes)){ //Yep, monstruous.
       thing.draw();
     }
-    this.party.draw();
-    pokeball.draw();
   }
   update(){
     const self = this;

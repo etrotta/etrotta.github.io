@@ -3,20 +3,22 @@ class Scene{
     this.config = config;
     this.elements = [...elements];
   }
-  addClickable(clickable){
-    this.elements.push(clickable);
+  addElement(element){
+    this.elements.push(element);
   }
   setActive(value){
     for (let element of this.elements){
       element.setActive(value);
     }
+    if (this.config.resetOnClose && value === false) this.reset();
   }
   reset(){
     while (this.elements.length){ this.elements.pop(); }
   }
-  static setActiveScene(scene){
-    Instance.activeScene.setActive(false);
+  static setActiveScene(scene,object = null){
+    if (Instance.activeScene != null) Instance.activeScene.setActive(false);
     Instance.activeScene = scene;
+    if (scene.config.loader != null) scene.config.loader(scene,object);
     scene.setActive(true);
   }
   draw(){

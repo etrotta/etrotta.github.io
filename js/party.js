@@ -45,14 +45,7 @@ class Party{
       if (slot.pokemon != null){
         slot.pokemon.update(level);
       }
-      // slot.update();
     }
-  }
-  draw(){
-    for (let slot of this.slots){
-      slot.draw();
-    }
-
   }
   populateSlots(){
     for (let i = 0; i < 6; i++){

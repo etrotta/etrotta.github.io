@@ -44,14 +44,14 @@ class Pokemon{
     }
     if (this.changedAttackTicks < 10) this.changedAttackTicks++;
   }
-  __draw(x = this.x, y = this.y,color = this.types[0].color, hp = true, range = false){
+  __draw(x = this.x, y = this.y, hp = true){
+    const color = this.types[0].color;
     if (outOfBounds(x,y)) return;
     ctx.fillStyle = color;
     ctx.beginPath();
     ctx.arc(x,y,10,0,Math.PI*2);
     ctx.fill();
     if (hp) this.displayHealth(x,y);
-    if (range) this.displayHealth(x,y);
     this.displayLevel(x,y-24);
     for (let attack of this.attacks){
       attack.draw();
@@ -113,8 +113,6 @@ class Pokemon{
   }
   attack(other, move){
     let modifiers = [];
-    // let resolve = other.damage;
-    // let vars = damageFormula(this,other,move,modifiers);
     let self = this;
     let resolve = function(){if (other != null && other.health > 0) other.damage(damageFormula(self,other,move,modifiers));};
     this.attacks.push( new Attack(move, this, other, resolve, move.type.color) );
@@ -221,7 +219,7 @@ class Ally extends Pokemon{
     this.slot = null;
     const self = this;
     this.hitbox = new Dragable(
-      {x: -1, y:-1, width:32, height:32, draw:self, drawArgs:[undefined,false,true]},
+      {x: -1, y:-1, width:32, height:32, draw:self, drawArgs:[false,true]},
       null,
       {pokemon:self, selectable:self},
       function(){paused = true;},
@@ -241,11 +239,12 @@ class Ally extends Pokemon{
   update(level){
     if (!this.active) return;
     this.__update(level);
-    // this.draw();
   }
-  draw(x = this.x, y = this.y, color = this.color, hp = true, range = false){
+  draw(x = this.x, y = this.y, hp = true, range = false, exp = false, moves = false){
     this.__draw(...arguments);
     if (range) this.drawRange(x,y);
+    if (exp) this.displayExpOnSlot(x,y + 40);
+    if (moves) this.displayMovesOnSlot(x,y + 40);
   }
   drawRange(x = this.x, y = this.y,color = "rgba(0,63,127,0.5)"){
     if (drewThisTick.indexOf("range") != -1) return; drewThisTick.push("range");
@@ -267,6 +266,11 @@ class Ally extends Pokemon{
     ctx.fillRect(x - width/2, y - offsetY, width * ratio, height);
     ctx.fillStyle = "rgba(255,255,255,0.6)";
     ctx.fillRect(x + width/2 - (width * (1 - ratio)), y - offsetY, width * (1 - ratio), height);
+  }
+  displayMovesOnSlot(x,y){
+    for (let i = 0; i < this.moves.length; i++){
+      this.displayMoveOnSlot(x,y,i);
+    }
   }
   displayMoveOnSlot(x,y,i){
     if (this.moves[0] == null) return;
@@ -313,15 +317,11 @@ class Ally extends Pokemon{
     if (spot == null){
       this.setActive(false);
       this.moveTo(-1,-1);
-      // this.x = -1;
-      // this.y = -1;
     }
     else {
       this.setActive(true);
       spot.pokemon = this;
       this.moveTo(spot.x, spot.y, spot.width / 2, spot.height / 2);
-      // this.x = spot.x + spot.width/2;
-      // this.y = spot.y + spot.height/2;
     }
     if (other != null){
       other.spot = oldSpot;
@@ -329,22 +329,16 @@ class Ally extends Pokemon{
         oldSpot.pokemon = other;
         other.setActive(true);
         other.moveTo(oldSpot.x, oldSpot.y, oldSpot.width/2, oldSpot.height/2);
-        // other.x = oldSpot.x + oldSpot.width/2;
-        // other.y = oldSpot.y + oldSpot.height/2;
       }
       else {
         other.setActive(false);
         other.moveTo(-1,-1);
-        // other.x = -1;
-        // other.y = -1;
       }
-      // other.update();
       other.draw();
     }
     if (other == null && oldSpot != null){
       oldSpot.pokemon = null;
     }
-    // this.update();
     this.draw();
   }
   faint(){
@@ -354,7 +348,7 @@ class Ally extends Pokemon{
     // this.spot = null;
   }
   getEnemyInRange(level){
-    // FILTERING BY CLOSEST TO END
+    // FILTERING BY CLOSEST TO PATH END
     let poke = null;
     let distance = Infinity;
     for (let pokemon of level.wildPokes){

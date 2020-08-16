@@ -53,11 +53,8 @@ class LevelSelector{
     this.storageButton = new Clickable(
       {x: 700, y:450, width:300, height:100, color:grad, outline:{thickness:2,color:"black"}},
       {text:"Manage Party",color:"red",offsetX:"center",offsetY:"center",size:16},
-      function(value){if (value == 1){partyManager.openStorage(); /*self.activate(false);*/}}
+      function(value){if (value == 1){partyManager.openStorage();}}
     );
-    SCENES.set("insideOfLevel", new Scene({shouldDraw:true},this.returnButton, pokeball.hitbox, ...partyManager.party.slots.map(slot => slot.hitbox)));
-    SCENES.set("levelSelector", new Scene({shouldDraw:true},this.saveButton, this.resetButton, this.storageButton));
-    Instance.activeScene = SCENES.get("levelSelector");
   }
   addLevel(level){
     const self = this;
@@ -68,38 +65,16 @@ class LevelSelector{
       function(){self.startLevel(self._levels[index-1]);}
     );
     this.clickables.push(lvl);
-    SCENES.get("levelSelector").addClickable(lvl);
+    SCENES.get("levelSelector").addElement(lvl);
   }
-  // activate(value = true){
-  //   for (let level of this.clickables){
-  //     level.setActive(value);
-  //   }
-  //   this.saveButton.setActive(value);
-  //   this.resetButton.setActive(value);
-  //   this.storageButton.setActive(value);
-  //   this.returnButton.setActive(!value);
-  // }
   startLevel(level){
-    // this.activate(false);
     this.activeLevel = level;
     level.start();
     Scene.setActiveScene(SCENES.get("insideOfLevel"));
   }
-  draw(){
-    for (let clickable of levelSelector.clickables){
-      if (clickable.active) clickable.draw();
-    }
-    if (this.saveButton.active) this.saveButton.draw();
-    if (this.returnButton.active) this.returnButton.draw();
-    if (this.storageButton.active) this.storageButton.draw();
-    if (this.resetButton.active) this.resetButton.draw();
-    if (storageOpen) partyManager.drawStorage();
-  }
   return(){
     Scene.setActiveScene(SCENES.get("levelSelector"));
     partyManager.party.restore();
-    // this.activate(true);
     if (this.activeLevel != null) this.activeLevel.destroy();
-    if (storageOpen) partyManager.closeStorage();
   }
 }

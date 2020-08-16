@@ -13,8 +13,8 @@
   let waves = [];
   // waves.push(new Wave("rattata",10,path1,100,1,-1,rat_moves,false,false));
   // waves.push(new Wave("bulbasaur",20,path2,400,10,1,bulb_moves,true,true));
-  waves.push(["rattata",10,15,2,100,1,10,rat_moves,false,false]);
-  waves.push(["rattata",10,15,1,100,1,10,rat_moves,false,false]);
+  waves.push(["rattata",10,15,2,100,20,10,rat_moves,false,false]);
+  waves.push(["rattata",10,15,1,100,10,10,rat_moves,false,false]);
   waves.push(["rattata",15,20,0,200,1,5,rat_moves,false,false]);
 
   let spots = [];

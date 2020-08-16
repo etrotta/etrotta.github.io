@@ -1,3 +1,7 @@
+clickables = [];
+dragables = [];
+dropables = [];
+displays = [];
 class UIButton{
   constructor(rect,text,packet){
     this.rect = rect;
@@ -5,7 +9,7 @@ class UIButton{
     this.packet = packet;
     this.active = false;
   }
-  draw(x = this.rect.x, y = this.rect.y){
+  draw(x = this.rect.x, y = this.rect.y, mouse = false){
     if (!this.active) return;
     const rect = this.rect;
     if (rect.color != null){
@@ -17,7 +21,10 @@ class UIButton{
     if (sprite != null){
       let offsetX = rect.spriteOffsetX || 0;
       let offsetY = rect.spriteOffsetY || 0;
-      let args = []; if (rect.drawArgs != null) {args = rect.drawArgs;}
+      let args = [];
+      if (rect.drawArgs != null) {
+        args = rect.drawArgs;
+      }
       sprite.draw(x + rect.width / 2 + offsetX, y + rect.height / 2 + offsetY, ...args);
     }
 
@@ -47,7 +54,8 @@ class UIButton{
   drawOnMouse(x,y){
     ctx.globalApha = 0.5;
     const other = this.rect.draw;
-    let args = []; if (this.rect.drawArgs != null) args = this.rect.drawArgs;
+    let args = [];
+    if (this.rect.mouseDrawArgs != null) args = this.rect.mouseDrawArgs; else if (this.rect.drawArgs != null) args = this.rect.drawArgs;
     if (other != null){
       other.draw(x, y, ...args);
     }

@@ -7,7 +7,6 @@ class Attack{
     this.target = target;
     this.resolve = resolve;
     this.color = color;
-    // this.resolveVars = vars;
   }
   update(){
     if (this.target === undefined || this.target === null || this.target.health <= 0 || this.target.x == -1 || this.target.y == -1){
@@ -17,16 +16,12 @@ class Attack{
     this.x = Math.clamp(this.target.x, this.x - 8, this.x + 8 );
     this.y = Math.clamp(this.target.y, this.y - 8, this.y + 8 );
     if (this.x == this.target.x && this.y == this.target.y){
-      // this.draw();
-      // this.resolve(this.resolveVars);
       this.resolve();
       this.destroy();
       return;
     }
-    // this.draw();
   }
   draw(){
-    // ctx.fillStyle = "rgba(47, 179, 214, 0.6)";
     ctx.fillStyle = this.color;
     ctx.globalAlpha = 0.6;
     ctx.beginPath();
