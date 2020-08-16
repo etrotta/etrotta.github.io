@@ -7,9 +7,9 @@ class Vector2{
 Point = Vector2;
 
 class Path{
-  points = [];
-  connection = null;
   constructor(others){
+    this._points = [];
+    this.connection = null;
     for (let object of [...arguments].slice(1)){
       if (object instanceof Point){
         this.points.push(object);
@@ -25,19 +25,19 @@ class Path{
     }
   }
   get points(){
-    if (this.connection == null) return this.points;
+    if (this.connection == null) return this._points;
     else {
-        return this.points.concat( this.connection.points.slice(this.connectionStartAt) );
+        return this._points.concat( this.connection.points.slice(this.connectionStartAt) );
     }
   }
   set points(n){
     throw new Error("Cannot overwrite a path points!");
   }
   getPoint(i,safe = false){
-    if (i >= this.points.length && this.connection != null){
-      return this.connection.getPoint(i - this.points.length + this.connectionStartAt, safe);
-    }
-    if (i >= this.points.length && this.loop){
+    // if (i >= this._points.length && this.connection != null){
+    //   return this.connection.getPoint(i - this.points.length + this.connectionStartAt, safe);
+    // }
+    if (this.loop && i >= this._points.length){
       i = i - this.points.length;
       return this.points[i%(this.points.length - this.loopStartAt)+this.loopStartAt];
     }
@@ -57,7 +57,7 @@ class Path{
   }
   draw(){
     ctx.fillStyle = "rbga(63,63,255,0.3)";
-    let array = this.points.slice();
+    let array = this._points.slice();
     if (this.connection != null) {
       array.push(this.connection.points[this.connectionStartAt]);
     }

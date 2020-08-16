@@ -1,6 +1,6 @@
 class LevelSelector{
   constructor(){
-    this._levels = [...arguments];
+    this._levels = [];
     this.clickables = [];
     this.activeLevel = null;
     this.grad = ctx.createLinearGradient(0,0,canvas.width,canvas.height);
@@ -21,8 +21,7 @@ class LevelSelector{
       {x: canvas.width - 150, y:0, width:150, height:50, color:grad, outline:{thickness:2,color:"black"}},
       {text:"Return to tittle",color:"white",offsetX:"center",offsetY:"center",size:16},
       function(){self.return();}
-    )
-    // clickables.push(this.returnButton);
+    );
 
     // SAVE
     grad = ctx.createLinearGradient(700,300,800,450);
@@ -33,8 +32,8 @@ class LevelSelector{
       {x: 700, y:300, width:100, height:100, color:grad, outline:{thickness:2,color:"black"}},
       {text:"Save",color:"gold",offsetX:"center",offsetY:"center",size:16},
       function(value){if (value == 1){partyManager.save(); alert("Saved!");}}
-    )
-    // clickables.push(this.saveButton);
+    );
+
     // RESET
     grad = ctx.createLinearGradient(900,300,1100,450);
     grad.addColorStop(0.2, "rgb(100, 30, 30)");
@@ -44,8 +43,8 @@ class LevelSelector{
       {x: 900, y:300, width:100, height:100, color:grad, outline:{thickness:2,color:"black"}},
       {text:"Reset",color:"red",offsetX:"center",offsetY:"center",size:16},
       function(value){if (value == 1){partyManager.resetParty(); alert("Done!");}}
-    )
-    // clickables.push(this.resetButton);
+    );
+
     // STORAGE
     grad = ctx.createLinearGradient(700,450,1000,600);
       grad.addColorStop(0, "rgb(0,63,127)");
@@ -54,18 +53,11 @@ class LevelSelector{
     this.storageButton = new Clickable(
       {x: 700, y:450, width:300, height:100, color:grad, outline:{thickness:2,color:"black"}},
       {text:"Manage Party",color:"red",offsetX:"center",offsetY:"center",size:16},
-      function(value){if (value == 1){partyManager.openStorage(); self.activate(false);}}
-    )
-    // clickables.push(this.storageButton);
-    // grad = ctx.createLinearGradient(900,300,1000,300);
-    // grad.addColorStop(0, "rgb(0,0,127)");
-    //   grad.addColorStop(0.5, "blue");
-    //   grad.addColorStop(1, "rgb(0,0,127)");
-    // this.resetButton = new Clickable(
-    //   {x: 900, y:300, width:100, height:40, color:grad, outline:{thickness:2,color:"black"}},
-    //   {text:"The Lab",color:"gold",offsetX:18,offsetY:15,size:16},
-    //   function(value){if (value == 1){partyManager.resetParty(); alert("Done!");}}
-    // )
+      function(value){if (value == 1){partyManager.openStorage(); /*self.activate(false);*/}}
+    );
+    SCENES.set("insideOfLevel", new Scene({shouldDraw:true},this.returnButton, pokeball.hitbox, ...partyManager.party.slots.map(slot => slot.hitbox)));
+    SCENES.set("levelSelector", new Scene({shouldDraw:true},this.saveButton, this.resetButton, this.storageButton));
+    Instance.activeScene = SCENES.get("levelSelector");
   }
   addLevel(level){
     const self = this;
@@ -76,21 +68,22 @@ class LevelSelector{
       function(){self.startLevel(self._levels[index-1]);}
     );
     this.clickables.push(lvl);
-    // clickables.push(lvl);
+    SCENES.get("levelSelector").addClickable(lvl);
   }
-  activate(value = true){
-    for (let level of this.clickables){
-      level.setActive(value);
-    }
-    this.saveButton.setActive(value);
-    this.resetButton.setActive(value);
-    this.storageButton.setActive(value);
-    this.returnButton.setActive(!value);
-  }
+  // activate(value = true){
+  //   for (let level of this.clickables){
+  //     level.setActive(value);
+  //   }
+  //   this.saveButton.setActive(value);
+  //   this.resetButton.setActive(value);
+  //   this.storageButton.setActive(value);
+  //   this.returnButton.setActive(!value);
+  // }
   startLevel(level){
-    this.activate(false);
+    // this.activate(false);
     this.activeLevel = level;
     level.start();
+    Scene.setActiveScene(SCENES.get("insideOfLevel"));
   }
   draw(){
     for (let clickable of levelSelector.clickables){
@@ -103,8 +96,9 @@ class LevelSelector{
     if (storageOpen) partyManager.drawStorage();
   }
   return(){
+    Scene.setActiveScene(SCENES.get("levelSelector"));
     partyManager.party.restore();
-    this.activate(true);
+    // this.activate(true);
     if (this.activeLevel != null) this.activeLevel.destroy();
     if (storageOpen) partyManager.closeStorage();
   }

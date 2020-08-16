@@ -21,9 +21,9 @@ function handleMouse(evt,value){
   const y = evt.y - rect.top;
   if (outOfBounds(x,y) && value === 1) return;
   mousePos = {x,y};
-  levelHandleMouse(x,y,value);
+  // levelHandleMouse(x,y,value);
   for (let clickable of getClickables(x,y)) clickable.onClick(value);
-  if (value == 1) DRAGGING = null;
+  if (DRAGGING != null && value == 1) {DRAGGING.onDrop(null);}
   evt.preventDefault();
   drawAll();
 }
@@ -34,10 +34,12 @@ function handleMouseMove(evt){
   const y = evt.y - rect.top;
   drawAll();
   mousePos = {x,y};
-  levelHandleMouseMove(x,y);
-  if (DRAGGING != null){
-    DRAGGING.drawOnMouse(x,y);
-  }
+  for (let clickable of getClickables(x,y)) clickable.onHover();
+  // levelHandleMouseMove(x,y);
+  // if (DRAGGING != null && drewThisTick.indexOf("mouse dragging selected") == -1){
+    // drewThisTick.push("mouse dragging selected");
+    // DRAGGING.drawOnMouse(x,y);
+  // }
 }
 function handleKey(evt,value){
   levelHandleKey(evt.key,value);

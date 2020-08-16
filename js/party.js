@@ -54,19 +54,6 @@ class Party{
     }
 
   }
-  // populateSlots(party){
-  //   if (party == null) party = [
-  //     new Ally("bulbasaur",10,[MOVES["tackle"],MOVES["vineWhip"]]),
-  //     new Ally("bulbasaur",10,[MOVES["vineWhip"],MOVES["tackle"]]),
-  //     new Ally("rattata",10,[MOVES["tackle"]]),
-  //     null,
-  //     null,
-  //     null
-  //   ]; //placeholder
-  //   for (let i = 0; i < 6; i++){
-  //     this.slots[i] = new Slot(i * 120 + 20, 350,100,225, party[i]);
-  //   }
-  // }
   populateSlots(){
     for (let i = 0; i < 6; i++){
       this.slots[i] = new Slot(i * 120 + 20, 350,100,225, null);

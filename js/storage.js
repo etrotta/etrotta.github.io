@@ -1,4 +1,3 @@
-// NOT IMPLEMENTED YET
 class PokeStorage{
   constructor(){
     this.pokemons = [...arguments];

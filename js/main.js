@@ -1,13 +1,15 @@
 MOVES = new Map();
 POKEMONS = new Map();
+SCENES = new Map();
 resourceLoader = new ResourceLoader();
 
-Instance = {};
+Instance = {activeLevel:null, activeScene:null};
 canvas = null;
 ctx = null;
 paused = false;
 playerPaused = false;
 storageOpen = false;
+drewThisTick = [];
 
 window.addEventListener("load",load);
 
@@ -32,8 +34,9 @@ function load(){
 
   partyManager.load();
 
-  levelSelector.activate();
-  // levelSelector.storageButton.onClick(1);
+  Scene.setActiveScene(SCENES.get("levelSelector"));
+  // levelSelector.activate();
+  // levelSelector.clickables[0].onClick(1);
 
   loop();
   setInterval(loop,1000/30);
@@ -49,6 +52,8 @@ function load(){
 }
 
 function drawAll(){
+  while (drewThisTick.length) drewThisTick.pop();
+
   ctx.clearRect(0,0,canvas.width,canvas.height);
   let grad = ctx.createRadialGradient(canvas.width/2,canvas.height/2,100,canvas.width/2,canvas.height/2,Math.min(canvas.width/2,canvas.height/2));
     grad.addColorStop(0,"rgba(150,150,150,0.5)");
@@ -56,7 +61,9 @@ function drawAll(){
   ctx.fillStyle = grad;
   ctx.fillRect(0,0,canvas.width,canvas.height);
   if (Instance.activeLevel != null) Instance.activeLevel.draw();
+  if (Instance.activeScene != null) Instance.activeScene.draw();
   if (DRAGGING != null) DRAGGING.drawOnMouse(mousePos.x,mousePos.y);
+  for (let clickable of getClickables(mousePos.x,mousePos.y)) clickable.onHover();
   levelSelector.draw();
 }
 

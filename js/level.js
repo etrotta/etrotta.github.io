@@ -6,8 +6,13 @@ const DEFAULT_WIN_CONDITION = function(level){
   return true;
 }
 const DEFAULT_LOSE_CONDITION = function(level){
-  if (level.candies.length >= 0) return false;
-  return true;
+  let hasAlive = false;
+  for (let slot of party.slots){
+    if (slot.pokemon != null && slot.pokemon.health > 0) { hasAlive = true; }
+  }
+  if (!hasAlive) return true;
+  // if (level.candies.length == 0) return true;
+  return false;
 }
 
 class Level{
@@ -30,18 +35,15 @@ class Level{
     for (let thing of this.paths.concat(this.spots).concat(this.wildPokes)){ //Yep, monstruous.
       thing.draw();
     }
-    party.draw();
+    this.party.draw();
     pokeball.draw();
-    if (SELECTED instanceof Pokemon) {SELECTED.draw(mousePos.x,mousePos.y); SELECTED.drawRange(mousePos.x,mousePos.y);}
-    if (HOVER_SELECTED instanceof Pokemon) {HOVER_SELECTED.drawRange(undefined, undefined, "rgba(0,63,127,0.25)");}
-    if (SELECTED == pokeball) SELECTED.draw(mousePos.x,mousePos.y,25,0.5);
   }
   update(){
     const self = this;
     for (let thing of this.waves.concat(this.wildPokes)){
       thing.update(self);
     }
-    party.update(self);
+    this.party.update(self);
     if (this.winCondition(self)) this.win();
     if (this.loseCondition(self)) this.lose();
   }
@@ -51,7 +53,15 @@ class Level{
       wave.count = wave.originalCount;
       wave.ticks = wave.startingTicks;
     }
+    for (let spot of this.spots){
+      spot.hitbox.setActive(true);
+    }
     Instance.activeLevel = this;
+    for (let slot of this.party.slots){
+      if (slot.pokemon != null) slot.pokemon.hitbox.setActive(true);
+      slot.hitbox.setActive(true);
+    }
+    pokeball.hitbox.setActive(true);
   }
   destroy(){
     const self = this;
@@ -63,6 +73,14 @@ class Level{
     for (let slot of this.party.slots){
       if (slot.pokemon != null) slot.pokemon.setSpot(null);
     }
+    for (let spot of this.spots){
+      spot.hitbox.setActive(false);
+    }
+    for (let slot of this.party.slots){
+      if (slot.pokemon != null) slot.pokemon.hitbox.setActive(false);
+      slot.hitbox.setActive(false);
+    }
+    pokeball.hitbox.setActive(false);
   }
   win(){
     if (this.onWin != null) this.onWin();

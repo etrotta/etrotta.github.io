@@ -25,6 +25,7 @@ class Wave{
   }
   spawn(level){
     let pokemon = new Enemy(this.pokemon,random(this.minLevel,this.maxLevel),level.paths[this.path],this.moves.slice(0),this.shouldAttack,this.boss);
+    pokemon.hitbox.setActive(true);
     level.wildPokes.push(pokemon);
   }
   update(level){
