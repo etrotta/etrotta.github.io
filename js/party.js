@@ -13,7 +13,7 @@ class Party{
     else return false;
   }
   catch(enemy){
-    let newPoke = new Ally(enemy.id,enemy.level,enemy.moves);
+    let newPoke = new Ally(enemy.id,enemy.level,enemy.moves,enemy.name);
     partyManager.storage.add(newPoke);
     Instance.activeLevel.wildPokes.remove(enemy);
     for (let i = 0; i < this.slots.length; i++){
@@ -37,6 +37,7 @@ class Party{
         slot.pokemon.heal();
         slot.pokemon.attackTicks = [32,32,32,32];
         slot.pokemon.changedAttackTicks = 10;
+        slot.pokemon.stats.reset();
       }
     }
   }
@@ -49,7 +50,7 @@ class Party{
   }
   populateSlots(){
     for (let i = 0; i < 6; i++){
-      this.slots[i] = new Slot(i * 120 + 20, 350,100,225, null);
+      this.slots[i] = new Slot(i * 140 + 20, 350,130,225, null);
     }
   }
   reset(){

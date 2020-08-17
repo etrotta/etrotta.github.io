@@ -1,6 +1,6 @@
 {
   let rat_moves = ["tackle"];
-  let bulb_moves = ["vineWhip"];
+  let bulb_moves = ["vine_whip"];
 
   let paths = [];
   // let path1 = new Path(new Point(0,100), new Point(100,100), new Point(100,300), new Point(500,300));

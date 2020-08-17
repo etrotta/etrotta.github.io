@@ -19,7 +19,7 @@ class LevelSelector{
       grad.addColorStop(1, "black");
     this.returnButton = new Clickable(
       {x: canvas.width - 150, y:0, width:150, height:50, color:grad, outline:{thickness:2,color:"black"}},
-      {text:"Return to tittle",color:"white",offsetX:"center",offsetY:"center",size:16},
+      {text:"Return to tittle",color:"white",offsetX:"center",offsetY:"middle",size:16},
       function(){self.return();}
     );
 
@@ -30,7 +30,7 @@ class LevelSelector{
       grad.addColorStop(0.6, "rgb(30, 100, 30)");
     this.saveButton = new Clickable(
       {x: 700, y:300, width:100, height:100, color:grad, outline:{thickness:2,color:"black"}},
-      {text:"Save",color:"gold",offsetX:"center",offsetY:"center",size:16},
+      {text:"Save",color:"gold",offsetX:"center",offsetY:"middle",size:16},
       function(value){if (value == 1){partyManager.save(); alert("Saved!");}}
     );
 
@@ -41,8 +41,8 @@ class LevelSelector{
       grad.addColorStop(0.6, "rgb(100, 30, 30)");
     this.resetButton = new Clickable(
       {x: 900, y:300, width:100, height:100, color:grad, outline:{thickness:2,color:"black"}},
-      {text:"Reset",color:"red",offsetX:"center",offsetY:"center",size:16},
-      function(value){if (value == 1){partyManager.resetParty(); alert("Done!");}}
+      {text:"Reset",color:"red",offsetX:"center",offsetY:"middle",size:16},
+      function(value){if (value == 1 && window.confirm("Are you sure?")){partyManager.resetParty();}}
     );
 
     // STORAGE
@@ -52,7 +52,7 @@ class LevelSelector{
       grad.addColorStop(1, "rgb(0,63,127)");
     this.storageButton = new Clickable(
       {x: 700, y:450, width:300, height:100, color:grad, outline:{thickness:2,color:"black"}},
-      {text:"Manage Party",color:"red",offsetX:"center",offsetY:"center",size:16},
+      {text:"Manage Party",color:"gold",offsetX:"center",offsetY:"middle",size:16},
       function(value){if (value == 1){partyManager.openStorage();}}
     );
   }

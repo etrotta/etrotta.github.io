@@ -37,10 +37,10 @@ function load(){
 
 
   Scene.setActiveScene(SCENES.get("levelSelector"));
-  levelSelector.storageButton.onClick(0);
-  levelSelector.storageButton.onClick(1);
-  Instance.activeScene.elements[2].onClick(0);
-  Instance.activeScene.elements[2].onClick(1);
+  // levelSelector.storageButton.onClick(0);
+  // levelSelector.storageButton.onClick(1);
+  // Instance.activeScene.elements[2].onClick(0);
+  // Instance.activeScene.elements[2].onClick(1);
   // Scene.setActiveScene(SCENES.get("partyManager"));
 
   loop();
@@ -74,6 +74,6 @@ function drawAll(){
 function loop(){
   if (!paused && !playerPaused) {
     if (Instance.activeLevel != null) Instance.activeLevel.update();
+    drawAll();
   }
-  drawAll();
 }

@@ -40,14 +40,14 @@ class UIButton{
       ctx.font = `${text.size}px arial`;
       ctx.fillStyle = text.color;
       ctx.lineWidth = 1;
-      ctx.textAlign = text.offsetX == "center" ? "center" : "start";
-      ctx.textBaseline = text.offsetY == "center" ? "middle" : "top";
-      let offsetX;
+      ctx.textAlign = typeof(text.offsetX) === "string" ? text.offsetX : "start";
+      ctx.textBaseline = typeof(text.offsetY) === "string" ? text.offsetY : "top";
+      let offsetX = 0;
         if (typeof(text.offsetX) == "number") offsetX = text.offsetX;
-        if (text.offsetX == "center") offsetX = rect.width/2;
-      let offsetY;
+        if (text.offsetX == "center") offsetX = text.startXAt == null ? rect.width/2 : text.startXAt;
+      let offsetY = 0;
         if (typeof(text.offsetY) == "number") offsetY = text.offsetY;
-        if (text.offsetY == "center") offsetY = rect.height/2;
+        if (text.offsetY == "middle") offsetY = rect.height/2;
       ctx.fillText(text.text, x + 2 + offsetX, y + offsetY);
     }
   }

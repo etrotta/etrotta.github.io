@@ -1,7 +1,8 @@
 class Pokemon{
-  constructor(id,level,moves,x,y){
+  constructor(id,level,moves,x,y,name){
     this.id = id;
     this.data = POKEMONS.get(id); //the pokemon data are global variables currently
+    this.name = name == null ? this.data.name : name;
     this.types = this.data.types.slice(0);
     this.x = x;
     this.y = y;
@@ -11,8 +12,8 @@ class Pokemon{
     this.stats = new Stats(this.data.baseStats, level);
     this.health = this.stats.health.getValue();
     this.attacks = [];
-    this.attackTicks = [32,32,32,32];
-    this.changedAttackTicks = 10;
+    this.attackTicks = [3200,3200,3200,3200];
+    this.changedAttackTicks = 1000;
     this.moves = moves;
     this.__selectedMove = 0;
   }
@@ -28,21 +29,32 @@ class Pokemon{
   }
   __update(level){
     let ticks = this.attackTicks;
+    const speedMulti = this.stats.get("speed").getMulti() ** 0.5;
     if (this.moves[this.selectedMove] != null && (this.shouldAttack == null || this.shouldAttack == true)){
-      for (let i = ticks.length; i >= 0; i--) (ticks[i]++);
-      if (ticks[this.selectedMove] >= 32 && this.changedAttackTicks >= 10){
-        let target = this.getEnemyInRange(level);
-        if (target != null) {
-          this.attack(target,this.moves[this.selectedMove]);
-          ticks[this.selectedMove] = 0;
+      for (let i = ticks.length; i >= 0; i--) { ticks[i]+= 100 * speedMulti;}
+      if (ticks[this.selectedMove] >= 3200 && this.changedAttackTicks >= 1000){
+        const move = this.moves[this.selectedMove];
+        if (move.category == "attack" || move.category == "special_attack"){
+          const target = this.getEnemyInRange(level);
+          if (target != null) {
+            this.attack(target,move);
+            ticks[this.selectedMove] = 0;
+          }
+        }
+        else if (move.category == "status"){
+          if (move.target == "self"){
+            this.stats.apply(move.attackerStatMods);
+            ticks[this.selectedMove] = 0;
+          }
         }
       }
-      for (let i = ticks.length; i >= 0; i--) (ticks[i] = Math.clamp(ticks[i],0,32));
+      for (let i = ticks.length; i >= 0; i--) (ticks[i] = Math.clamp(ticks[i],0,3200));
       for (let attack of this.attacks){
         attack.update();
       }
     }
-    if (this.changedAttackTicks < 10) this.changedAttackTicks++;
+    if (this.changedAttackTicks < 1000) this.changedAttackTicks += 100 * speedMulti;
+    this.changedAttackTicks = Math.clamp(this.changedAttackTicks,0,1000);
   }
   __draw(x = this.x, y = this.y, hp = true){
     const color = this.types[0].color;
@@ -139,12 +151,13 @@ class Pokemon{
 
 
 class Enemy extends Pokemon{
-  constructor(id,level,path,moves = [],shouldAttack = false,isBoss = false){
-    super(id, level, moves, path.start.x, path.start.y);
+  constructor(id,level,path,moves = [],shouldAttack = false,isBoss = false, name = undefined){
+    super(id, level, moves, path.start.x, path.start.y, name);
     this.path = path;
     this.targetPoint = 0;
     this.shouldAttack = shouldAttack;
     this.isBoss = isBoss;
+    this.moveTicks = 0;
 
     const self = this;
     this.hitbox = new Dropable(
@@ -154,6 +167,9 @@ class Enemy extends Pokemon{
     );
   }
   update(level){
+    const speedMulti = this.stats.get("speed").getMulti() ** 0.5;
+    this.moveTicks += 10 * speedMulti;
+  while (this.moveTicks >= 10){
     let point;
     let safety = 0;
     do {
@@ -172,6 +188,8 @@ class Enemy extends Pokemon{
       let y = Math.clamp(point.y, this.y - 1, this.y + 1 );
       this.moveTo(x - 16, y - 16, 16, 16); //shhhhhh
     }
+  this.moveTicks -= 10;
+  }
     // this.draw();
     this.__update(level);
   }
@@ -212,8 +230,8 @@ class Enemy extends Pokemon{
 
 
 class Ally extends Pokemon{
-  constructor (id,level,moves){
-    super(id,level,moves,-1,-1);
+  constructor (id,level,moves,name){
+    super(id,level,moves,-1,-1,name);
     this.active = false;
     this.spot = null;
     this.slot = null;
@@ -240,11 +258,12 @@ class Ally extends Pokemon{
     if (!this.active) return;
     this.__update(level);
   }
-  draw(x = this.x, y = this.y, hp = true, range = false, exp = false, moves = false){
+  draw(x = this.x, y = this.y, hp = true, range = false, exp = false, moves = false, stats = false){
     this.__draw(...arguments);
     if (range) this.drawRange(x,y);
     if (exp) this.displayExpOnSlot(x,y + 40);
     if (moves) this.displayMovesOnSlot(x,y + 40);
+    if (stats) this.updateStatsDisplay(x,y);
   }
   drawRange(x = this.x, y = this.y,color = "rgba(0,63,127,0.5)"){
     if (drewThisTick.indexOf("range") != -1) return; drewThisTick.push("range");
@@ -274,13 +293,13 @@ class Ally extends Pokemon{
   }
   displayMoveOnSlot(x,y,i){
     if (this.moves[0] == null) return;
-    const width = 90;
-    const height = 24;
-    const offsetY = 24 * i;
+    const width = 120;
+    const height = 30;
+    const offsetY = 30 * i;
     const move = this.moves[i];
     const key = ["Z","X","C","V"][i];
-    const moveProgress = this.attackTicks[i] / 32;
-    const changeProgress = this.changedAttackTicks / 10;
+    const moveProgress = this.attackTicks[i] / 3200;
+    const changeProgress = this.changedAttackTicks / 1000;
 
     ctx.lineWidth = 2;
     ctx.strokeStyle = "white";
@@ -303,6 +322,26 @@ class Ally extends Pokemon{
     if (LAST_SELECTED == this){
       ctx.textAlign = "right";
       ctx.fillText(`(${key})`, x + width/2 - 2, y + height/2 + offsetY + 1);
+    }
+  }
+  updateStatsDisplay(x,y){
+    let offsetX = -80;
+    let offsetY = -32;
+    for (let stat of this.stats.stats){
+      if (stat.display != null){
+        if (stat.stage != 0) {
+        // stat.display.rect.x = x + offsetX;
+        // stat.display.rect.y = y;
+        stat.display.text.text = stat.stage > 0 ? "+"+stat.stage : stat.stage;
+        stat.display.draw(x + offsetX, y + offsetY);
+        // stat.display.setActive(true);
+        }
+        else {
+          // stat.display.setActive(false);
+        }
+        offsetX += 16;
+        if (offsetX == -32) { offsetX = -64; offsetY += 16; }
+      }
     }
   }
   setSpot(spot){
@@ -365,15 +404,16 @@ class Ally extends Pokemon{
   save(){
     let data = {};
     data.id = this.id;
+    data.name = this.name;
     data.level = this.level;
     data.experience = this.experience;
     data.moves = []; for (let move of this.moves) data.moves.push(move.id);
     return JSON.stringify(data);
   }
-  static load(data){ // Load FROM RESOURCE, not from save data*
+  static load(data){
     if (data.id == null) return;
     let moves = []; for (let move of data.moves){ moves.push(MOVES.get(move)); }
-    let poke = new Ally(data.id,parseInt(data.level),moves);
+    let poke = new Ally(data.id,parseInt(data.level),moves,data.name);
     poke.experience = parseInt(data.experience);
     return poke;
   }

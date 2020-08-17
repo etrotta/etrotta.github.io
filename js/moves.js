@@ -5,6 +5,8 @@ class Move{
 
     this.power = data.power;
     this.type = data.type;
+    this.category = data.category;
+    this.target = data.target;
 
     this.attackingStat = data.attackingStat;
     this.defendingStat = data.defendingStat;

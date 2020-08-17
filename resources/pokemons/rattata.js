@@ -1,5 +1,6 @@
 {
   const rattata = {
+    id:"rattata",
     name:"Rattata",
     baseStats:{
       health:100,

@@ -1,5 +1,5 @@
 const defaultParty =
-  "[\"{\\\"id\\\":\\\"bulbasaur\\\",\\\"level\\\":5,\\\"experience\\\":0,\\\"moves\\\":[\\\"tackle\\\",\\\"vineWhip\\\"]}\"]";
+  "[\"{\\\"id\\\":\\\"bulbasaur\\\",\\\"name\\\":\\\"Bulbasaur\\\",\\\"level\\\":5,\\\"experience\\\":0,\\\"moves\\\":[\\\"tackle\\\",\\\"vine_whip\\\",\\\"swords_dance\\\",\\\"agility\\\"]}\"]";
 
 class PartyManager{
   constructor(party,storage){
@@ -46,7 +46,7 @@ class PartyManager{
       const poke = this.party.slots[i].pokemon;
       const dragable = new Dragable(
         {x: 40 + 128*i, y:80, width:128, height:128, draw:poke, drawArgs:[false]},
-        {text:poke == null ? "" : poke.id,color:"gold",offsetX:"center",offsetY:96,size:14},
+        {text:poke == null ? "" : poke.name,color:"gold",offsetX:"center",offsetY:96,size:14},
         {poke:poke},
         null,
         null,
@@ -65,7 +65,7 @@ class PartyManager{
             }
             this.packet.dragable.packet.poke = newPoke;
             this.packet.dragable.rect.draw = newPoke;
-            this.packet.dragable.text.text = newPoke == null ? "" : newPoke.id;
+            this.packet.dragable.text.text = newPoke == null ? "" : newPoke.name;
             const oldSlotIndex = newPoke.slot;
             if (oldSlotIndex != null){
               self.party.slots[oldSlotIndex].pokemon = null;
@@ -85,7 +85,7 @@ class PartyManager{
       const poke = this.storage.pokemons[i];
       const dragable = new Dragable(
         {x: 128 + 96*i, y:244, width:96, height:96, color:"rgba(0,0,0,0.2)", outline:{thickness:2,color:"black"}, draw:poke, drawArgs:[false]},
-        {text:poke == null ? "" : poke.id,color:"gold",offsetX:"center",offsetY:64,size:12},
+        {text:poke == null ? "" : poke.name,color:"gold",offsetX:"center",offsetY:64,size:12},
         {poke:poke}
       );
       scene.addElement(dragable);

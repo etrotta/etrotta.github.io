@@ -14,7 +14,7 @@ class Slot{
       grad.addColorStop(1, "black");
 
     this.hitbox = new Dragable(
-      {x: x, y:y, width:width, height:height, color:grad, outline:{thickness:2,color:"black"}, spriteOffsetY: - height/3, draw:null, drawArgs:[true,false,true,true], mouseDrawArgs:[false,true]},
+      {x: x, y:y, width:width, height:height, color:grad, outline:{thickness:2,color:"black"}, spriteOffsetY: - height/3, draw:null, drawArgs:[true,false,true,true,true], mouseDrawArgs:[false,true]},
       null,
       {pokemon:null, selectable:null},
       function(){if (self.pokemon != null) {self.pokemon.hitbox.startFunction(); DRAGGING = self.pokemon.hitbox;}},
