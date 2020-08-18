@@ -39,7 +39,8 @@ class Dragable extends UIButton{
     if (this.hoverFunction != null) this.hoverFunction();
   }
   destroy(){
+    if (this.preventDestroy) return;
     dragables.remove(this);
-    delete this;
+    this.setActive(false);
   }
 }

@@ -15,12 +15,12 @@ class Party{
   catch(enemy){
     let newPoke = new Ally(enemy.id,enemy.level,enemy.moves,enemy.name);
     partyManager.storage.add(newPoke);
-    if (enemy.candy != null) {enemy.candy.pokemon = null; enemy.candy.x = enemy.x; enemy.candy.y = enemy.y;}
-    Instance.activeLevel.wildPokes.remove(enemy);
+    enemy.faint(false);
     for (let i = 0; i < this.slots.length; i++){
       if (this.slots[i].pokemon == null){
         this.slots[i].pokemon = newPoke;
         newPoke.slot = i;
+        newPoke.hitbox.setActive(true);
         return true;
       }
     }

@@ -13,7 +13,7 @@ class Scene{
     if (this.config.resetOnClose && value === false) this.reset();
   }
   reset(){
-    while (this.elements.length){ this.elements.pop(); }
+    while (this.elements.length){ this.elements.pop().destroy(); }
   }
   getElementByText(text){
     for (let element of this.elements){
@@ -35,8 +35,8 @@ class Scene{
     popup.setActive(true);
   }
   static removePopup(popup){
-    Instance.popups.remove(popup);
     popup.setActive(false);
+    Instance.popups.remove(popup);
   }
   static display(text,color){
     const centerX = canvas.width / 2;

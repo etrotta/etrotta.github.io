@@ -5,7 +5,8 @@ class Display extends UIButton{
     if (autoAdd) displays.push(this);
   }
   destroy(){
+    if (this.preventDestroy) return;
     displays.remove(this);
-    delete this;
+    this.setActive(false);
   }
 }

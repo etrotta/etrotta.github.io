@@ -24,7 +24,8 @@ class Dropable extends UIButton{
     if (this.hoverFunction != null) this.hoverFunction();
   }
   destroy(){
+    if (this.preventDestroy) return;
+    this.setActive(false);
     dropables.remove(this);
-    delete this;
   }
 }

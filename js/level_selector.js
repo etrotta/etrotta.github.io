@@ -22,6 +22,7 @@ class LevelSelector{
       {text:"Return to tittle",color:"white",offsetX:"center",offsetY:"middle",size:16},
       function(){self.return();}
     );
+    this.returnButton.preventDestroy = true;
 
     // SAVE
     grad = ctx.createLinearGradient(700,300,800,450);
@@ -33,6 +34,7 @@ class LevelSelector{
       {text:"Save",color:"gold",offsetX:"center",offsetY:"middle",size:16},
       function(value){if (value == 1){partyManager.save(); Scene.display("Saved!","green");}}
     );
+    this.saveButton.preventDestroy = true;
 
     // RESET
     grad = ctx.createLinearGradient(900,300,1100,450);
@@ -44,6 +46,7 @@ class LevelSelector{
       {text:"Reset",color:"red",offsetX:"center",offsetY:"middle",size:16},
       function(value){if (value == 1 && window.confirm("Are you sure?")){partyManager.resetParty();}}
     );
+    this.resetButton.preventDestroy = true;
 
     // STORAGE
     grad = ctx.createLinearGradient(700,450,1000,600);
@@ -55,6 +58,8 @@ class LevelSelector{
       {text:"Manage Party",color:"gold",offsetX:"center",offsetY:"middle",size:16},
       function(value){if (value == 1){partyManager.openStorage();}}
     );
+    this.storageButton.preventDestroy = true;
+
   }
   addLevel(level){
     const self = this;
@@ -73,8 +78,11 @@ class LevelSelector{
     Scene.setActiveScene(SCENES.get("insideOfLevel"));
   }
   return(){
+    if (this.activeLevel != null) {
+      this.activeLevel.destroy();
+      Instance.activeLevel = null;
+    }
     Scene.setActiveScene(SCENES.get("levelSelector"));
     partyManager.party.restore();
-    if (this.activeLevel != null) this.activeLevel.destroy();
   }
 }

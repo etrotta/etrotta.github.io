@@ -13,6 +13,7 @@ class TimedDisplay extends UIButton{
   }
   destroy(){
     Instance.popups.remove(this);
+    this.setActive(false);
     displays.remove(this);
   }
 }

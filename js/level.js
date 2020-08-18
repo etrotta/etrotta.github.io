@@ -68,12 +68,11 @@ class Level{
   }
   destroy(){
     const self = this;
-    Instance.activeLevel = null;
     for (let wave of this.waves){
       wave.destroy(self);
     }
     while (this.candies.length) this.candies.pop();
-    while (this.wildPokes.length) this.wildPokes.pop().__faint(); //__faint just removes the attacks
+    while (this.wildPokes.length) this.wildPokes.pop().faint(false); //__faint just removes the attacks
     for (let slot of this.party.slots){
       if (slot.pokemon != null) slot.pokemon.setSpot(null);
     }

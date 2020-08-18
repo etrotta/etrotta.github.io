@@ -174,8 +174,7 @@ class Pokemon{
     this.health -= value;
     if (this.health <= 0){
       this.health = 0;
-      this.__faint();
-      this.faint();
+      this.faint(true);
     }
   }
   heal(value = this.stats.get("health").getValue()){
@@ -203,7 +202,7 @@ class Enemy extends Pokemon{
 
     const self = this;
     this.hitbox = new Dropable(
-      {x: -1, y:-1, width:32, height:32, draw:self,color:"blue"},
+      {x: -1, y:-1, width:32, height:32, draw:self},
       null,
       {pokemon:self}
     );
@@ -222,8 +221,7 @@ class Enemy extends Pokemon{
       // console.log("Walking");
     } while ((this.path.loop || point != this.path.end) && this.x == point.x && this.y == point.y);
     if (!this.path.loop && point == this.path.end && this.x == point.x && this.y == point.y){
-      Instance.activeLevel.wildPokes.remove(this);
-      if (this.candy != null) Instance.activeLevel.candies.remove(this.candy);
+      this.faint(false);
       // return;
     } else {
       const x = Math.clamp(point.x, this.x - 1, this.x + 1 );
@@ -241,8 +239,10 @@ class Enemy extends Pokemon{
     this.__draw(...arguments);
     if (this.candy != null) this.candy.draw(x,y-10);
   }
-  faint(){
-    Instance.activeLevel.party.addExp(expGainFormula(this));
+  faint(exp = true){
+    this.hitbox.destroy();
+    this.__faint();
+    if (exp) Instance.activeLevel.party.addExp(expGainFormula(this));
     if (this.candy != null) {this.candy.pokemon = null; this.candy.x = this.x; this.candy.y = this.y;}
     Instance.activeLevel.wildPokes.remove(this);
   }
@@ -290,6 +290,7 @@ class Ally extends Pokemon{
       function(dropable){paused = false; if (dropable == null){ self.setSpot(null); } else if (dropable.packet.spot instanceof Spot){ self.setSpot(dropable.packet.spot); } },
       function(){self.drawRange();}
     );
+    this.hitbox.preventDestroy = true;
   }
   setActive(value){
     if (this.health <= 0 && value == 1) return;
