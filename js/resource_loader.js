@@ -24,7 +24,9 @@ class ResourceLoader{
           lvl[2].forEach(wave => waves.push( new Wave(wave) ));
         let spots = [];
           lvl[3].forEach(spot => spots.push( new Spot(...spot) ));
-      levelSelector.addLevel(new Level(lvl[0],paths,waves,spots));
+        let candies = [];
+          if (lvl[4] != undefined) lvl[4].forEach(candy => candies.push( new Candy(...candy) ));
+      levelSelector.addLevel(new Level(lvl[0],paths,waves,spots,candies));
     }
   }
 }

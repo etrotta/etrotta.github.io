@@ -199,6 +199,7 @@ class Enemy extends Pokemon{
     this.shouldAttack = shouldAttack;
     this.isBoss = isBoss;
     this.moveTicks = 0;
+    this.candy = null;
 
     const self = this;
     this.hitbox = new Dropable(
@@ -221,13 +222,15 @@ class Enemy extends Pokemon{
       // console.log("Walking");
     } while ((this.path.loop || point != this.path.end) && this.x == point.x && this.y == point.y);
     if (!this.path.loop && point == this.path.end && this.x == point.x && this.y == point.y){
-      // console.log("Path end");
-      // this.draw();
+      Instance.activeLevel.wildPokes.remove(this);
+      if (this.candy != null) Instance.activeLevel.candies.remove(this.candy);
       // return;
     } else {
-      let x = Math.clamp(point.x, this.x - 1, this.x + 1 );
-      let y = Math.clamp(point.y, this.y - 1, this.y + 1 );
-      this.moveTo(x - 16, y - 16, 16, 16); //shhhhhh
+      const x = Math.clamp(point.x, this.x - 1, this.x + 1 );
+      const y = Math.clamp(point.y, this.y - 1, this.y + 1 );
+      const candy = Instance.activeLevel.getCandy(x,y);
+      if (this.candy == null && candy != null) {this.candy = candy; candy.pokemon = this;}
+      this.moveTo(x - 16, y - 16, 16, 16); //shhhhhh (the latter values are offset for the actual poke, the -16 is for the hitbox)
     }
   this.moveTicks -= 10;
   }
@@ -236,9 +239,11 @@ class Enemy extends Pokemon{
   }
   draw(x = this.x, y = this.y){
     this.__draw(...arguments);
+    if (this.candy != null) this.candy.draw(x,y-10);
   }
   faint(){
     Instance.activeLevel.party.addExp(expGainFormula(this));
+    if (this.candy != null) {this.candy.pokemon = null; this.candy.x = this.x; this.candy.y = this.y;}
     Instance.activeLevel.wildPokes.remove(this);
   }
   getEnemyInRange(level){

@@ -26,6 +26,11 @@
   spots.push([240,250]);
   spots.push([440,250]);
 
+  let candies = [];
+  candies.push([450,300]);
+  candies.push([440,296]);
+  candies.push([444,305]);
+
   // LEVEL_TWO = new Level(paths,waves,spots);
-  resourceLoader.addLevel("LEVEL_TWO",paths,waves,spots);
+  resourceLoader.addLevel("LEVEL_TWO",paths,waves,spots,candies);
 }

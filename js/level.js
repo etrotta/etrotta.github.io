@@ -11,18 +11,19 @@ const DEFAULT_LOSE_CONDITION = function(level){
     if (slot.pokemon != null && slot.pokemon.health > 0) { hasAlive = true; }
   }
   if (!hasAlive) return true;
-  // if (level.candies.length == 0) return true;
+  if (level.__candies.length != 0 && level.candies.length == 0) return true;
   return false;
 }
 
 class Level{
-  constructor(id,paths,waves,spots,winCondition = DEFAULT_WIN_CONDITION, onWin = null, loseCondition = DEFAULT_LOSE_CONDITION, onLose = null){
+  constructor(id,paths,waves,spots,candies = [],winCondition = DEFAULT_WIN_CONDITION, onWin = null, loseCondition = DEFAULT_LOSE_CONDITION, onLose = null){
     this.id = id;
     this.paths = paths;
     this.__waves = waves.slice(0);
-    this.waves = null;
+    this.waves = [];
     this.spots = spots;
     this.wildPokes = [];
+    this.__candies = candies;
     this.candies = [];
     this.party = partyManager.party;
     this.winCondition = winCondition;
@@ -34,6 +35,9 @@ class Level{
     const self = this;
     for (let thing of this.paths.concat(this.spots).concat(this.wildPokes)){ //Yep, monstruous.
       thing.draw();
+    }
+    for (let candy of this.candies){
+      if (candy.pokemon == null) candy.draw();
     }
   }
   update(){
@@ -51,6 +55,7 @@ class Level{
       wave.count = wave.originalCount;
       wave.ticks = wave.startingTicks;
     }
+    this.candies = this.__candies.slice(0);
     for (let spot of this.spots){
       spot.hitbox.setActive(true);
     }
@@ -67,7 +72,8 @@ class Level{
     for (let wave of this.waves){
       wave.destroy(self);
     }
-    while (this.wildPokes.length) this.wildPokes.pop().__faint();
+    while (this.candies.length) this.candies.pop();
+    while (this.wildPokes.length) this.wildPokes.pop().__faint(); //__faint just removes the attacks
     for (let slot of this.party.slots){
       if (slot.pokemon != null) slot.pokemon.setSpot(null);
     }
@@ -89,5 +95,14 @@ class Level{
   lose(){
     if (this.onLoad != null) this.onLose();
     levelSelector.return();
+  }
+  getCandy(x,y){
+    for (let candy of this.candies){
+      if (candy.pokemon != null) continue;
+      if (x - 16 < candy.x && candy.x < x + 16 && y - 16 < candy.y && candy.y < y + 16){
+        return candy;
+      }
+    }
+    return null;
   }
 }

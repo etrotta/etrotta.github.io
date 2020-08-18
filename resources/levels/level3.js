@@ -39,8 +39,8 @@
   });
   waves.push({
     id:"rattata",
-    minLevel:10,
-    maxLevel:15,
+    minLevel:15,
+    maxLevel:20,
     path:0,
     delay:200,
     startingDelay:1,
@@ -62,6 +62,13 @@
   spots.push([434,234]);
   spots.push([534,234]);
 
+  let candies = [];
+  candies.push([500,300]);
+  candies.push([500,310]);
+  candies.push([500,290]);
+  candies.push([510,300]);
+  candies.push([490,300]);
+
   // LEVEL_TWO = new Level(paths,waves,spots);
-  resourceLoader.addLevel("LEVEL_THREE",paths,waves,spots);
+  resourceLoader.addLevel("LEVEL_THREE",paths,waves,spots,candies);
 }
