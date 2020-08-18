@@ -21,7 +21,7 @@ class ResourceLoader{
         let paths = [];
           lvl[1].forEach(path => paths.push( new Path(paths,...path) ));
         let waves = [];
-          lvl[2].forEach(wave => waves.push( new Wave(...wave) ));
+          lvl[2].forEach(wave => waves.push( new Wave(wave) ));
         let spots = [];
           lvl[3].forEach(spot => spots.push( new Spot(...spot) ));
       levelSelector.addLevel(new Level(lvl[0],paths,waves,spots));

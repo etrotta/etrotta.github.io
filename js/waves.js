@@ -1,21 +1,21 @@
 class Wave{
-  constructor(id,minLevel,maxLevel,path,delay,startingDelay,count,moves,shouldAttack,boss,forceEnd,onEnd,name){
-    this.pokemon = id;
-    this.minLevel = minLevel;
-    this.maxLevel = maxLevel;
-    this.path = path;
-    this.delay = delay;
-    this.startingTicks = startingDelay;
-    this.ticks = startingDelay;
-    this.count = count;
-    this.originalCount = count;
-    this.shouldAttack = shouldAttack;
-    this.boss = boss;
-    this.forceEnd = forceEnd;
-    this.onEnd = onEnd;
-    this.pokesName = name;
+  constructor(data){
+    this.pokemon = data.id;
+    this.minLevel = data.minLevel;
+    this.maxLevel = data.maxLevel;
+    this.path = data.path;
+    this.delay = data.delay;
+    this.startingTicks = data.startingDelay;
+    this.ticks = data.startingDelay;
+    this.count = data.count;
+    this.originalCount = data.count;
+    this.shouldAttack = data.shouldAttack;
+    this.boss = data.boss;
+    this.forceEnd = data.forceEnd;
+    this.onEnd = data.onEnd;
+    this.pokesName = data.name;
     this.moves = [];
-      for (let move of moves){
+      for (let move of data.moves){
         if (move instanceof Move){
           this.moves.push(move);
         }

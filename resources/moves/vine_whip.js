@@ -5,6 +5,8 @@
     power: 45,
     type: TYPE_GRASS,
     category: "attack",
+    target:"single",
+    requiresTarget:true,
     attackingStat: "attack",
     defendingStat: "defense",
     attackerStatMods: [],

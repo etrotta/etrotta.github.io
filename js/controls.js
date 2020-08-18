@@ -4,9 +4,23 @@ PRE_DRAG = null;
 PRE_CLICK = null;
 
 function getClickables(x,y){
-  let ar = [];
+  const ar = [];
   for (let clickable of clickables.concat(dropables).concat(dragables)){
     if (clickable.active && clickable.rect.x < x && x < (clickable.rect.x + clickable.rect.width) && clickable.rect.y < y && y < (clickable.rect.y + clickable.rect.height)) ar.push(clickable);
+  }
+  if (Instance.popups[0] != undefined){
+    const filtered = [];
+    loopArray: for (let i = 0; i < ar.length; i++){ //adds a label to continue later
+      const clickable = ar[i];
+      for (let j = 0; j < Instance.popups.length; j++){
+        const popup = Instance.popups[j];
+        if (popup.elements.indexOf(clickable) != -1){
+          filtered.push(clickable);
+          continue loopArray;
+        }
+      }
+    }
+    return filtered;
   }
   return ar;
 }

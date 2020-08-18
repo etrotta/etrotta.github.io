@@ -16,6 +16,7 @@ class Pokemon{
     this.changedAttackTicks = 1000;
     this.moves = moves;
     this.__selectedMove = 0;
+    this.preventLeveling = false;
   }
   get selectedMove(){
     return this.__selectedMove;
@@ -33,20 +34,7 @@ class Pokemon{
     if (this.moves[this.selectedMove] != null && (this.shouldAttack == null || this.shouldAttack == true)){
       for (let i = ticks.length; i >= 0; i--) { ticks[i]+= 100 * speedMulti;}
       if (ticks[this.selectedMove] >= 3200 && this.changedAttackTicks >= 1000){
-        const move = this.moves[this.selectedMove];
-        if (move.category == "attack" || move.category == "special_attack"){
-          const target = this.getEnemyInRange(level);
-          if (target != null) {
-            this.attack(target,move);
-            ticks[this.selectedMove] = 0;
-          }
-        }
-        else if (move.category == "status"){
-          if (move.target == "self"){
-            this.stats.apply(move.attackerStatMods);
-            ticks[this.selectedMove] = 0;
-          }
-        }
+        this.doAttack(level);
       }
       for (let i = ticks.length; i >= 0; i--) (ticks[i] = Math.clamp(ticks[i],0,3200));
       for (let attack of this.attacks){
@@ -56,7 +44,42 @@ class Pokemon{
     if (this.changedAttackTicks < 1000) this.changedAttackTicks += 100 * speedMulti;
     this.changedAttackTicks = Math.clamp(this.changedAttackTicks,0,1000);
   }
-  __draw(x = this.x, y = this.y, hp = true){
+  doAttack(level){
+    const move = this.moves[this.selectedMove];
+    if (move.category == "attack" || move.category == "special"){
+      if (move.requiresTarget){
+          const target = this.getEnemyInRange(level);
+          if (target == null) return false;
+          if (move.target == "special"){
+            for (let enemy of move.targetFunction(this,target,level)){
+              this.attack(enemy,move);
+              this.attackTicks[this.selectedMove] = 0;
+            }
+          }
+          else if (move.target == "single"){
+            this.attack(target,move);
+            this.attackTicks[this.selectedMove] = 0;
+          }
+        }
+
+      else {
+        if (move.target == "special"){
+          for (let target of move.targetFunction(this,level)){
+            this.attack(target,move);
+            this.attackTicks[this.selectedMove] = 0;
+          }
+        }
+      }
+    }
+    else if (move.category == "status"){
+      if (move.target == "self"){
+        this.stats.apply(move.attackerStatMods);
+        this.attackTicks[this.selectedMove] = 0;
+      }
+    }
+
+  }
+  __draw(x = this.x, y = this.y, hp = true, level = true){
     const color = this.types[0].color;
     if (outOfBounds(x,y)) return;
     ctx.fillStyle = color;
@@ -64,7 +87,7 @@ class Pokemon{
     ctx.arc(x,y,10,0,Math.PI*2);
     ctx.fill();
     if (hp) this.displayHealth(x,y);
-    this.displayLevel(x,y-24);
+    if (level) this.displayLevel(x,y-24);
     for (let attack of this.attacks){
       attack.draw();
     }
@@ -101,16 +124,30 @@ class Pokemon{
     if (this.experience >= expToLevel){
       this.experience -= expToLevel;
       this.levelUp();
-      this.addExp(0); //just to run again
+      if (!this.preventLeveling) this.addExp(0); //just to run again
     }
   }
   levelUp(){
     if (this.level === LEVEL_CAP) return;
     this.level++;
+    this.checkMoves();
     this.checkEvolution();
     this.stats.update(this.level);
     this.health = this.stats.get("health").getValue();
     if (this.level === LEVEL_CAP) this.experience = 0;
+  }
+  checkMoves(){
+    for (let move of this.data.levelMoves){
+      if (this.level == move.level){
+        this.preventLeveling = true;
+        paused = true;
+        const self = this;
+        Scene.addPopup(SCENES.get("newMovePopup"),this,MOVES.get(move.id),function(replacedMove){
+          self.preventLeveling = false;
+          paused = false;
+        },{x:300,y:150,width:512,height:256});
+      }
+    }
   }
   checkEvolution(){
     return null; //not implementated yet
@@ -124,10 +161,14 @@ class Pokemon{
     }
   }
   attack(other, move){
-    let modifiers = [];
-    let self = this;
-    let resolve = function(){if (other != null && other.health > 0) other.damage(damageFormula(self,other,move,modifiers));};
-    this.attacks.push( new Attack(move, this, other, resolve, move.type.color) );
+    const modifiers = [];
+    const self = this;
+    if (move.instantaneous != true){
+      const resolve = function(){if (other != null && other.health > 0) other.damage(damageFormula(self,other,move,modifiers));};
+      this.attacks.push( new Attack(move, this, other, resolve, move.type.color) );
+    } else {
+      if (other != null && other.health > 0) other.damage(damageFormula(self,other,move,modifiers));
+    }
   }
   damage(value){
     this.health -= value;
@@ -237,7 +278,7 @@ class Ally extends Pokemon{
     this.slot = null;
     const self = this;
     this.hitbox = new Dragable(
-      {x: -1, y:-1, width:32, height:32, draw:self, drawArgs:[false,true]},
+      {x: -1, y:-1, width:32, height:32, draw:self, drawArgs:[false,true,true]},
       null,
       {pokemon:self, selectable:self},
       function(){paused = true;},
@@ -258,7 +299,7 @@ class Ally extends Pokemon{
     if (!this.active) return;
     this.__update(level);
   }
-  draw(x = this.x, y = this.y, hp = true, range = false, exp = false, moves = false, stats = false){
+  draw(x = this.x, y = this.y, hp = true, level = true, range = false, exp = false, moves = false, stats = false){
     this.__draw(...arguments);
     if (range) this.drawRange(x,y);
     if (exp) this.displayExpOnSlot(x,y + 40);

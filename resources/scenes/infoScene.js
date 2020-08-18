@@ -38,6 +38,12 @@ function loadInfoScene(scene,dragable){
       }
     ));
   }
+  //Relearn POPUP
+  scene.addElement(new Clickable(
+    {x: 100, y:464, width:128, height:64, color:"rgba(0,0,0,0.5)", outline:{thickness:2,color:"black"}},
+    {text:"Relearn",color:"white",offsetX:"center",offsetY:"middle",size:16},
+    function(value){if (value == 1){Scene.addPopup(SCENES.get("relearnPopup"),pokemon);}}
+  ));
   //Return to party
   let grad = ctx.createLinearGradient(canvas.width-150,0,canvas.width,0);
   grad.addColorStop(0, "black"); grad.addColorStop(0.5, "rgb(48, 12, 103)"); grad.addColorStop(1, "black");

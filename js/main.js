@@ -3,7 +3,7 @@ POKEMONS = new Map();
 SCENES = new Map();
 resourceLoader = new ResourceLoader();
 
-Instance = {activeLevel:null, activeScene:null};
+Instance = {activeLevel:null, activeScene:null, popups:[]};
 canvas = null;
 ctx = null;
 paused = false;
@@ -41,6 +41,8 @@ function load(){
   // levelSelector.storageButton.onClick(1);
   // Instance.activeScene.elements[2].onClick(0);
   // Instance.activeScene.elements[2].onClick(1);
+  // Instance.activeScene.elements[9].onClick(0);
+  // Instance.activeScene.elements[9].onClick(1);
   // Scene.setActiveScene(SCENES.get("partyManager"));
 
   loop();
@@ -67,6 +69,7 @@ function drawAll(){
   ctx.fillRect(0,0,canvas.width,canvas.height);
   if (Instance.activeLevel != null) Instance.activeLevel.draw();
   if (Instance.activeScene != null) Instance.activeScene.draw();
+  for (let popup of Instance.popups) popup.draw();
   if (DRAGGING != null) DRAGGING.drawOnMouse(mousePos.x,mousePos.y,true);
   for (let clickable of getClickables(mousePos.x,mousePos.y)) clickable.onHover();
 }

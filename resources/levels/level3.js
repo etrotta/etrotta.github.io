@@ -13,9 +13,45 @@
   let waves = [];
   // waves.push(new Wave("rattata",10,path1,100,1,-1,rat_moves,false,false));
   // waves.push(new Wave("bulbasaur",20,path2,400,10,1,bulb_moves,true,true));
-  waves.push(["rattata",10,15,2,100,20,10,rat_moves,false,false]);
-  waves.push(["rattata",10,15,1,100,10,10,rat_moves,false,false]);
-  waves.push(["rattata",15,20,0,200,1,5,rat_moves,false,false]);
+  waves.push({
+    id:"rattata",
+    minLevel:10,
+    maxLevel:15,
+    path:2,
+    delay:100,
+    startingDelay:20,
+    count:10,
+    moves:rat_moves,
+    shouldAttack:false,
+    boss:false
+  });
+  waves.push({
+    id:"rattata",
+    minLevel:10,
+    maxLevel:15,
+    path:1,
+    delay:100,
+    startingDelay:10,
+    count:10,
+    moves:rat_moves,
+    shouldAttack:false,
+    boss:false
+  });
+  waves.push({
+    id:"rattata",
+    minLevel:10,
+    maxLevel:15,
+    path:0,
+    delay:200,
+    startingDelay:1,
+    count:5,
+    moves:rat_moves,
+    shouldAttack:false,
+    boss:false
+  });
+  // waves.push(["rattata",10,15,2,100,20,10,rat_moves,false,false]);
+  // waves.push(["rattata",10,15,1,100,10,10,rat_moves,false,false]);
+  // waves.push(["rattata",15,20,0,200,1,5,rat_moves,false,false]);
 
   let spots = [];
   // spot center = x + 16

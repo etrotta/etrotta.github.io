@@ -5,6 +5,8 @@
     power: 40,
     type: TYPE_NORMAL,
     category: "attack",
+    target:"single",
+    requiresTarget:true,
     attackingStat: "attack",
     defendingStat: "defense",
     attackerStatMods: [],

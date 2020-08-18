@@ -10,9 +10,9 @@
       special_defense:10,
       speed:10
     },
-    levelMoves:{
-      1:"tackle"
-    },
+    levelMoves:[
+      {level:1, id:"tackle"}
+    ],
     types:[
       TYPE_NORMAL
     ]

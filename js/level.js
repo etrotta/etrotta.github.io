@@ -79,6 +79,8 @@ class Level{
       slot.hitbox.setActive(false);
     }
     pokeball.hitbox.setActive(false);
+    if (PRE_DRAG != null) PRE_DRAG = null;
+    if (DRAGGING != null) DRAGGING = null;
   }
   win(){
     if (this.onWin != null) this.onWin();

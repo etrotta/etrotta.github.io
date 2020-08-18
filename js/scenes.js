@@ -28,4 +28,16 @@ function setScenes(){
     {shouldDraw:true, loader:loadInfoScene, resetOnClose:true}
   )
   SCENES.set("pokemonInfo",pokemonInfoScene);
+
+  //POKEMON MOVES RELEARN SCENE
+  let pokemonRelearnScene = new Scene(
+    {shouldDraw:true, loader:loadRelearnScene, resetOnClose:true}
+  )
+  SCENES.set("relearnPopup",pokemonRelearnScene);
+
+  //POKEMON NEW MOVE SCENE
+  let pokemonNewMoveScene = new Scene(
+    {shouldDraw:true, loader:loadNewMoveScene, resetOnClose:true}
+  )
+  SCENES.set("newMovePopup",pokemonNewMoveScene);
 }

@@ -10,10 +10,11 @@
       special_defense:10,
       speed:10
     },
-    levelMoves:{
-      1:"tackle",
-      1:"vineWhip"
-    },
+    levelMoves:[
+      {level:1,id:"tackle"},
+      {level:1,id:"vine_whip"},
+      {level:6,id:"solar_beam"}
+    ],
     types:[
       TYPE_GRASS,
       TYPE_POISON
