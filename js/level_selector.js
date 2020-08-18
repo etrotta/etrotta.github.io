@@ -31,7 +31,7 @@ class LevelSelector{
     this.saveButton = new Clickable(
       {x: 700, y:300, width:100, height:100, color:grad, outline:{thickness:2,color:"black"}},
       {text:"Save",color:"gold",offsetX:"center",offsetY:"middle",size:16},
-      function(value){if (value == 1){partyManager.save(); alert("Saved!");}}
+      function(value){if (value == 1){partyManager.save(); Scene.display("Saved!","green");}}
     );
 
     // RESET

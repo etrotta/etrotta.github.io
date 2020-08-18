@@ -50,6 +50,7 @@ class UIButton{
         if (text.offsetY == "middle") offsetY = rect.height/2;
       ctx.fillText(text.text, x + 2 + offsetX, y + offsetY);
     }
+    if (this.onDraw != null) this.onDraw();
   }
   drawOnMouse(x,y){
     ctx.globalApha = 0.5;

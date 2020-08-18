@@ -14,6 +14,7 @@ function getClickables(x,y){
       const clickable = ar[i];
       for (let j = 0; j < Instance.popups.length; j++){
         const popup = Instance.popups[j];
+        if (!(popup instanceof Scene)) continue;
         if (popup.elements.indexOf(clickable) != -1){
           filtered.push(clickable);
           continue loopArray;

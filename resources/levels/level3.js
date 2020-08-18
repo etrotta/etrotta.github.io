@@ -64,10 +64,10 @@
 
   let candies = [];
   candies.push([500,300]);
-  candies.push([500,310]);
-  candies.push([500,290]);
-  candies.push([510,300]);
-  candies.push([490,300]);
+  candies.push([507,307]);
+  candies.push([493,293]);
+  candies.push([507,293]);
+  candies.push([493,307]);
 
   // LEVEL_TWO = new Level(paths,waves,spots);
   resourceLoader.addLevel("LEVEL_THREE",paths,waves,spots,candies);

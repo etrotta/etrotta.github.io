@@ -38,6 +38,14 @@ class Scene{
     Instance.popups.remove(popup);
     popup.setActive(false);
   }
+  static display(text,color){
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    Instance.popups.push(new TimedDisplay(90,
+      {x:centerX / 2, y:centerY/2 - 100, width:centerX, height:100, color:"rgb(0,0,0,0.5)", outline:{thickness:2,color:"black"}},
+      {text:text, color:color, size:24, offsetX:"center", offsetY:"middle"}
+    ));
+  }
   draw(){
     if (this.config.shouldDraw != false){
       for (let element of this.elements){ element.draw(); }

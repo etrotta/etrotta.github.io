@@ -47,7 +47,7 @@ class Level{
     }
     this.party.update(self);
     if (this.winCondition(self)) this.win();
-    if (this.loseCondition(self)) this.lose();
+    else if (this.loseCondition(self)) this.lose();
   }
   start(){
     this.waves = this.__waves.slice(0);
@@ -91,10 +91,12 @@ class Level{
   win(){
     if (this.onWin != null) this.onWin();
     levelSelector.return();
+    Scene.display("Victory!","blue");
   }
   lose(){
-    if (this.onLoad != null) this.onLose();
+    if (this.onLose != null) this.onLose();
     levelSelector.return();
+    Scene.display("Lost...","red");
   }
   getCandy(x,y){
     for (let candy of this.candies){
